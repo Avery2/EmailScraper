@@ -64,7 +64,7 @@ with open(input_csv, newline='') as csvfile:
             my_str += " email"
 
             # output
-            print("---" * 10)
+            print(f"{try_num} " + "---" * 9)
             print(f"query list: {row}")
             print(f"search query: {my_str}")
             foundTerms = findemail(my_str)  # runs search
