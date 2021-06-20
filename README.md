@@ -22,6 +22,8 @@ Takes a csv as input for search terms, checks google page for emails, outputs as
 
 [email regex](https://emailregex.com/)
 
+[email validation](https://github.com/karolyi/py3-validate-email)
+
 ## Possible Expansions
 
 [Linkedin API](https://docs.microsoft.com/en-us/linkedin/)
