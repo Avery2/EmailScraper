@@ -6,6 +6,17 @@ import re
 import time
 
 
+# These are only for testing
+num_tries = 50  # the number of google searches it will do
+try_num = 0
+
+# this selects what column to add quotes around in the google search
+# the columns corresond to the columns of the input csv.
+# Note it is zero indexed, so the first row is 0, second row is 1, third row is 2
+input_csv = 'TestCaseEmailScript.csv'
+row_quote = 2
+
+
 def findemail(text="default text"):
     # This function google searches the inputed text and returns all the text on the google search page
 
@@ -31,21 +42,11 @@ def findemail(text="default text"):
 current_time = time.strftime("h%H-m%M-s%S", time.localtime())
 f = open(f"foundemails-{current_time}.csv", "a")
 
-# These are only for testing
-num_tries = 5  # the number of google searches it will do
-try_num = 0
-
-# this selects what column to add quotes around in the google search
-# the columns corresond to the columns of the input csv.
-# Note it is zero indexed, so the first row is 0, second row is 1, third row is 2
-row_quote = 2
-input_csv = 'TestCaseEmailScript.csv'
-
 with open(input_csv, newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
         # added delay to attempt to not be flagged as bot
-        time.sleep(1.5)
+        time.sleep(.1)
 
         # this unreadable logic is to ignore empty rows read in by the csv reader
         ignore_empty = ' '.join(row).replace(',', ' ').strip()
@@ -68,8 +69,8 @@ with open(input_csv, newline='') as csvfile:
             print(f"query list: {row}")
             print(f"search query: {my_str}")
             foundTerms = findemail(my_str)  # runs search
-            if foundTerms:
-                f.write(f"{', '.join(foundTerms)}\n")  # writes to file
+            # if foundTerms:
+            f.write(f"{', '.join(foundTerms)}\n")  # writes to file
             print(f"found terms: {foundTerms}")
             print("---" * 10)
             print()
