@@ -68,5 +68,8 @@ x = re.findall("[^\s]+@[^\s]+\.[^\s]+", txt)
 
 with open('TestCaseEmailScript.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    # print(spamreader)
     for row in spamreader:
-        print(', '.join(row))
+        # print(', '.join(row))
+        if any(row):
+            print(row)
