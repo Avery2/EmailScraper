@@ -14,6 +14,7 @@
 
 # Import the beautifulsoup
 # and request libraries of python.
+import csv
 import requests
 import bs4
 import re
@@ -22,7 +23,7 @@ import re
 # 'https://google.com/search?q=' and
 # our customized search keyword.
 # Concatenate them
-text = "Iain	Donnison “Aberystwyth University” UK email"
+text = "Iain	Donnison 'Aberystwyth University' UK email"
 url = 'https://google.com/search?q=' + text
 
 # Fetch the URL data using requests.get(url),
@@ -35,8 +36,9 @@ soup = bs4.BeautifulSoup(request_result.text,
 # print(soup)
 # print(type(soup))
 # print(soup.prettify)
-print(soup.get_text())
 # print(type(soup.get_text()))
+
+# print(soup.get_text())
 
 
 # soup.find.all( h3 ) to grab
@@ -54,12 +56,17 @@ txt = soup.get_text()
 # print(x)
 
 print()
-print()
+print("---"*10)
 print()
 
 # x = re.findall("\s.+@.+\..+\s", txt)
-x = re.findall("\s[^\s]+@[^\s]+\.[^\s]+\s", txt)
+x = re.findall("[^\s]+@[^\s]+\.[^\s]+", txt)
 # print(x)
-for e in x:
-    print(e)
-    print()
+# for e in x:
+#     print(e)
+#     print()
+
+with open('TestCaseEmailScript.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    for row in spamreader:
+        print(', '.join(row))
