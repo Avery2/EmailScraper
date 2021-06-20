@@ -76,6 +76,7 @@ with open(input_csv, newline='') as csvfile:
 
             # logic to limit number of searches for testing
             try_num += 1
+            # remove this line if you don't want to limit how many searches you do
             if try_num >= num_tries:
                 break
 
