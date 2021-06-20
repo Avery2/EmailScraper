@@ -16,7 +16,7 @@ def findemail(text="default text"):
     txt = soup.get_text()
 
     # This print statement shows the raw text that is actually found for debugging (i.e. you have been flagged as a bot)
-    print(txt)
+    # print(txt)
     botMessage = "This page checks to see if it's really you sending the requests, and not a robot."
     if len(re.findall(botMessage, txt)) > 0:
         print("\nWARNING: You may have been flagged as a bot. Uncomment `print(txt)` in the findemail() function to check\n")
