@@ -7,7 +7,7 @@ import time
 
 
 # These are only for testing
-num_tries = 50  # the number of google searches it will do
+num_tries = 5  # the number of google searches it will do
 try_num = 0
 
 # this selects what column to add quotes around in the google search
@@ -15,6 +15,11 @@ try_num = 0
 # Note it is zero indexed, so the first row is 0, second row is 1, third row is 2
 input_csv = 'TestCaseEmailScript.csv'
 row_quote = 2
+
+# delay between searches (to hopefully avoid bot)
+delaySeconds = 0.1
+# row to start from
+rowStart = 0
 
 
 def findemail(text="default text"):
@@ -44,9 +49,12 @@ f = open(f"foundemails-{current_time}.csv", "a")
 
 with open(input_csv, newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in spamreader:
+    for rowIndex, row in enumerate(spamreader):
+        if rowIndex < rowStart:
+            continue
+
         # added delay to attempt to not be flagged as bot
-        time.sleep(.1)
+        time.sleep(delaySeconds)
 
         # this unreadable logic is to ignore empty rows read in by the csv reader
         ignore_empty = ' '.join(row).replace(',', ' ').strip()
