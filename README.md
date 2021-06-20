@@ -25,3 +25,7 @@ Takes a csv as input for search terms, checks google page for emails, outputs as
 ## Possible Expansions
 
 [Linkedin API](https://docs.microsoft.com/en-us/linkedin/)
+
+## Installing and stuff (not comprehensive)
+
+`python -m pip install py3-validate-email`

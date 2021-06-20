@@ -4,7 +4,7 @@ import requests
 import bs4
 import re
 import time
-
+from validate_email import validate_email
 
 # These are only for testing
 num_tries = 5  # the number of google searches it will do
@@ -20,6 +20,10 @@ row_quote = 2
 delaySeconds = 0.1
 # row to start from
 rowStart = 0
+runSecondaryEmailCheck = True
+runSlowEmailCheck = False  # this doesn't actually work rn
+# if True write newlines when no email found for a row
+writeBlanks = True
 
 
 def findemail(text="default text"):
@@ -77,9 +81,26 @@ with open(input_csv, newline='') as csvfile:
             print(f"query list: {row}")
             print(f"search query: {my_str}")
             foundTerms = findemail(my_str)  # runs search
-            # if foundTerms:
-            f.write(f"{', '.join(foundTerms)}\n")  # writes to file
             print(f"found terms: {foundTerms}")
+            foundTermsFiltered = []
+            for mail in foundTerms:
+                is_valid_address = validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False)
+                print(f"{is_valid_address} : {mail}")
+                if runSecondaryEmailCheck:
+                    if is_valid_address:
+                        foundTermsFiltered.append(mail)
+                    if runSlowEmailCheck:
+                        is_valid = validate_email(email_address=mail, check_format=True, check_blacklist=True, check_dns=False, dns_timeout=10, check_smtp=True, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=True)
+                        print(f"{is_valid} : {mail}")
+                else:
+                    foundTermsFiltered.append(mail)
+
+            foundTermsFiltered = list(set(foundTermsFiltered))  # remove duplicates
+
+            if writeBlanks:
+                f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
+            elif foundTermsFiltered:
+                f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
             print("---" * 10)
             print()
 
