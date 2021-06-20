@@ -64,10 +64,10 @@ with open(input_csv, newline='') as csvfile:
 
             # output
             print("---" * 10)
-            print(f"list: {row}")
+            print(f"query list: {row}")
             print(f"search query: {my_str}")
-            foundTerms = findemail(my_str)
-            f.write(f"{' '.join(foundTerms)}\n")
+            foundTerms = findemail(my_str)  # runs search
+            f.write(f"{' '.join(foundTerms)}\n")  # writes to file
             print(f"found terms: {foundTerms}")
             print("---" * 10)
             print()
