@@ -22,7 +22,8 @@ def findemail(text="default text"):
         print("\nWARNING: You may have been flagged as a bot. Uncomment `print(txt)` in the findemail() function to check\n")
 
     # this is the regular expression that finds the email
-    myRegularExpression = "[^\s]+@[^\s]+\.[^\s]+"
+    # myRegularExpression = "[^\s]+@[^\s]+\.[^\s]+"
+    myRegularExpression = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
     return re.findall(myRegularExpression, txt)
 
 
