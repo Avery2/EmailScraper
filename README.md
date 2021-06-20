@@ -20,6 +20,8 @@ Takes a csv as input for search terms, checks google page for emails, outputs as
 
 [test email](https://gist.github.com/cjaoude/fd9910626629b53c4d25)
 
+[email regex](https://emailregex.com/)
+
 ## Possible Expansions
 
 [Linkedin API](https://docs.microsoft.com/en-us/linkedin/)
