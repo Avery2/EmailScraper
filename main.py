@@ -1,8 +1,4 @@
-# import os
-# from googleapi import google
-
-# Import the beautifulsoup
-# and request libraries of python.
+import os
 import csv
 import requests
 import bs4
@@ -10,85 +6,75 @@ import re
 import time
 
 
-def findemail(text):
-    # text = "Iain	Donnison 'Aberystwyth University' UK email"
+def findemail(text="default text"):
+    # This function google searches the inputed text and returns all the text on the google search page
+
     url = 'https://google.com/search?q=' + text
     request_result = requests.get(url)
     soup = bs4.BeautifulSoup(request_result.text,
                              "html.parser")
-    # print(soup.get_text())
-
-    # soup.find.all( h3 ) to grab
-    # all major headings of our search result,
-    # heading_object = soup.find_all('h3')
-
-    # Iterate through the object
-    # and print it as a string.
-    # for info in heading_object:
-    #     print(info.getText())
-    #     print("------")
-
     txt = soup.get_text()
-    # x = re.findall("isd@aber.ac.uk", txt)
-    # print(x)
+
+    # This print statement shows the raw text that is actually found for debugging (i.e. you have been flagged as a bot)
     # print(txt)
+    botMessage = "This page checks to see if it's really you sending the requests, and not a robot."
+    if len(re.findall(botMessage, txt)) > 0:
+        print("\nWARNING: You may have been flagged as a bot. Uncomment `print(txt)` in the findemail() function to check\n")
 
-    # print()
-    # print("---"*10)
-    # print()
-
-    # x = re.findall("\s.+@.+\..+\s", txt)
-    x = re.findall("[^\s]+@[^\s]+\.[^\s]+", txt)
-    # print(x)
-    # for e in x:
-    #     print(e)
-    #     print()
-    return x
+    # this is the regular expression that finds the email
+    myRegularExpression = "[^\s]+@[^\s]+\.[^\s]+"
+    return re.findall(myRegularExpression, txt)
 
 
-f = open("demofile2.txt", "a")
-num_tries = 2
+# create a txt file to write the found emails to
+current_time = time.strftime("h%H-m%M-s%S", time.localtime())
+f = open(f"foundemails-{current_time}.txt", "a")
+
+# These are only for testing
+num_tries = 5  # the number of google searches it will do
 try_num = 0
 
+# this selects what column to add quotes around in the google search
+# the columns corresond to the columns of the input csv.
+# Note it is zero indexed, so the first row is 0, second row is 1, third row is 2
 row_quote = 2
-with open('TestCaseEmailScript.csv', newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-    # print(spamreader)
+input_csv = 'TestCaseEmailScript.csv'
+
+with open(input_csv, newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
+        # added delay to attempt to not be flagged as bot
         time.sleep(1.5)
 
-        foo = ' '.join(row).replace(',', ' ').strip()
-        if foo != '':
-            for i, elem in enumerate(row):
-                row[i] = elem.replace(',', ' ')
-            # here no blanks
-            # print(row[0] + " " + row[1])
+        # this unreadable logic is to ignore empty rows read in by the csv reader
+        ignore_empty = ' '.join(row).replace(',', ' ').strip()
+        if ignore_empty != '':
+            # here, the row variable is now a list of the current row of the csv where each element is one cell
+
+            # change row into a string to search
             my_str = ''
             for i, elem in enumerate(row):
+                row[i] = elem.replace(',', ' ')
+            for i, elem in enumerate(row):
                 if i == row_quote:
-                    my_str += "\"" + elem + "\""
+                    my_str += " \"" + elem + "\""
                 else:
                     my_str += " " + elem
             my_str += " email"
+
+            # output
             print("---" * 10)
-            print(row)
-            print(my_str)
-            print(findemail(my_str))
+            print(f"list: {row}")
+            print(f"search query: {my_str}")
+            foundTerms = findemail(my_str)
+            f.write(f"{' '.join(foundTerms)}\n")
+            print(f"found terms: {foundTerms}")
             print("---" * 10)
             print()
+
+            # logic to limit number of searches for testing
             try_num += 1
             if try_num >= num_tries:
                 break
 
-
-# foo = ''
-# for word in row:
-#     foo += " " + word.replace(',', ' ')
-# if foo.strip():
-#     print(foo)
-#     # print(findemail(foo))
-#     # print()
-#     print("---"*10)
-#     # print()
-# print(row.split(""))
-# print(', '.join(row))
+f.close()
