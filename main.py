@@ -29,7 +29,7 @@ def findemail(text="default text"):
 
 # create a txt file to write the found emails to
 current_time = time.strftime("h%H-m%M-s%S", time.localtime())
-f = open(f"foundemails-{current_time}.txt", "a")
+f = open(f"foundemails-{current_time}.csv", "a")
 
 # These are only for testing
 num_tries = 5  # the number of google searches it will do
@@ -68,7 +68,8 @@ with open(input_csv, newline='') as csvfile:
             print(f"query list: {row}")
             print(f"search query: {my_str}")
             foundTerms = findemail(my_str)  # runs search
-            f.write(f"{' '.join(foundTerms)}\n")  # writes to file
+            if foundTerms:
+                f.write(f"{', '.join(foundTerms)}\n")  # writes to file
             print(f"found terms: {foundTerms}")
             print("---" * 10)
             print()
