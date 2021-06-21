@@ -103,10 +103,12 @@ with open(input_csv, newline='') as csvfile:
 
             foundTermsFiltered = list(set(foundTermsFiltered))  # remove duplicates
 
-            if writeBlanks:
-                f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
-            elif foundTermsFiltered:
-                f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
+            print(f"found {foundTermsFiltered}")
+            f.write(f"{', '.join(foundTermsFiltered)}\n")
+            # if writeBlanks:
+            #     f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
+            # elif foundTermsFiltered:
+            #     f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
             print("---" * 10)
             print()
 
