@@ -110,4 +110,18 @@ with open(input_csv, newline='') as csvfile:
             if try_num >= num_tries:
                 break
 
+csvfile.close()
 f.close()
+
+with open(input_csv, 'r') as f1, open(f"foundemails-{current_time}.csv", 'r') as f2, open(f"foundemails-combined-{current_time}.csv", 'w') as w:
+    writer = csv.writer(w)
+    r1, r2 = csv.reader(f1), csv.reader(f2)
+    while True:
+        try:
+            writer.writerow(next(r1)+next(r2))
+        except StopIteration:
+            break
+
+f1.close()
+f2.close()
+w.close()
