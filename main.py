@@ -61,6 +61,7 @@ with open(input_csv, newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for rowIndex, row in enumerate(spamreader):
         if rowIndex < rowStart:
+            f.write(f"\n")
             continue
 
         # added delay to attempt to not be flagged as bot
