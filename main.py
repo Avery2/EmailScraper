@@ -13,13 +13,13 @@ num_tries = 5  # the number of google searches it will do
 # this selects what column to add quotes around in the google search
 # the columns corresond to the columns of the input csv.
 # Note it is zero indexed, so the first row is 0, second row is 1, third row is 2
-input_csv = 'TestCaseEmailScript.csv'
+input_csv = 'input/TestCaseEmailScript.csv'
 row_quote = 2
 
 # delay between searches (to hopefully avoid bot)
 delaySeconds = 0.1
 # row to start from
-rowStart = 0
+rowStart = 10
 
 # ==== PROBABLY LEAVE ALONE ====
 
@@ -55,7 +55,7 @@ def findemail(text="default text"):
 
 # create a txt file to write the found emails to
 current_time = time.strftime("h%H-m%M-s%S", time.localtime())
-f = open(f"foundemails-{current_time}.csv", "a")
+f = open(f"output/foundemails-{current_time}.csv", "a")
 
 with open(input_csv, newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -104,7 +104,7 @@ with open(input_csv, newline='') as csvfile:
 
             foundTermsFiltered = list(set(foundTermsFiltered))  # remove duplicates
 
-            print(f"found {foundTermsFiltered}")
+            print(f"valid emails: {foundTermsFiltered}")
             f.write(f"{', '.join(foundTermsFiltered)}\n")
             # if writeBlanks:
             #     f.write(f"{', '.join(foundTermsFiltered)}\n")  # writes to file
@@ -122,7 +122,7 @@ with open(input_csv, newline='') as csvfile:
 csvfile.close()
 f.close()
 
-with open(input_csv, 'r') as f1, open(f"foundemails-{current_time}.csv", 'r') as f2, open(f"foundemails-combined-{current_time}.csv", 'w') as w:
+with open(input_csv, 'r') as f1, open(f"output/oundemails-{current_time}.csv", 'r') as f2, open(f"output/foundemails-combined-{current_time}.csv", 'w') as w:
     writer = csv.writer(w)
     r1, r2 = csv.reader(f1), csv.reader(f2)
     while True:

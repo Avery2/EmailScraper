@@ -2,6 +2,11 @@
 
 Takes a csv as input for search terms, checks google page for emails, outputs as txt file with found emails.
 
+## Running
+
+Edit parameters at top of `main.js` then run in terminal: `python main.js` (or `python3 main.js`).
+
+Make sure you use python version 3.6 or above.
 ## Link Dump
 
 <!-- []() -->
