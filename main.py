@@ -6,9 +6,9 @@ import re
 import time
 from validate_email import validate_email
 
+# ==== CHANGE THESE AS NEEDED ====
 # These are only for testing
 num_tries = 5  # the number of google searches it will do
-try_num = 0
 
 # this selects what column to add quotes around in the google search
 # the columns corresond to the columns of the input csv.
@@ -20,10 +20,16 @@ row_quote = 2
 delaySeconds = 0.1
 # row to start from
 rowStart = 0
+
+# ==== PROBABLY LEAVE ALONE ====
+
 runSecondaryEmailCheck = True
 runSlowEmailCheck = False  # this doesn't actually work rn
 # if True write newlines when no email found for a row
 writeBlanks = True
+
+# Initialize values
+try_num = 0
 
 
 def findemail(text="default text"):
