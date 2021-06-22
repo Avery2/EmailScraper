@@ -66,7 +66,7 @@ def findemail(text="default text"):
 
     botMessage = "This page checks to see if it's really you sending the requests, and not a robot."
     if len(re.findall(botMessage, txt)) > 0:
-        print("\nWARNING: You may have been flagged as a bot. Uncomment `print(txt)` in the findemail() function to check.\n")
+        print("\nWARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.\n")
 
     # this is the regular expression that finds the email
     # myRegularExpression = "[^\s]+@[^\s]+\.[^\s]+"
