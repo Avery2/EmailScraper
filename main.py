@@ -111,7 +111,7 @@ def filterFoundTerms(foundTerms):
     if SECONDARY_EMAIL_CHECK:
         for mail in foundTerms:
             is_valid_address = validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False)
-            print(f"{PrintColors.GREEN}{is_valid_address}{PrintColors.RESET} : {mail}") if is_valid_address else print(f"{PrintColors.RED}{is_valid_address}{PrintColors.RESET} : {mail}")
+            print(f"{PrintColors.GREEN}{is_valid_address}{PrintColors.RESET}  : {mail}") if is_valid_address else print(f"{PrintColors.RED}{is_valid_address}{PrintColors.RESET} : {mail}")
             if is_valid_address:
                 foundTermsFiltered.append(mail)
             # if SLOW_EMAIL_CHECK:
