@@ -5,10 +5,11 @@ import bs4
 import re
 import time
 from validate_email import validate_email
+import random
 
 # ==== GENERAL ====
 START_ROW = 1
-NUM_SEARCH = 10  # the number of google searches it will do, if 0, will go forever
+NUM_SEARCH = 5  # the number of google searches it will do, if 0, will go forever
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = False
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
@@ -26,10 +27,19 @@ SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
 BING_QUERY_URL = 'https://bing.com/search?q='
 GOOGLE_BOT_MESSAGE = "This page checks to see if it's really you sending the requests, and not a robot."
-START_TIME = time.strftime("h%Hm%Ms%S", time.localtime())
-OUTPUT_PATH = "output/"
-QUERY_FILENAME = f"foundemails-{START_TIME}.csv"
-COMBINED_FILENAME = f"foundemails-combined-{START_TIME}.csv"
+START_TIME = time.strftime("%A-%H-%M-%S", time.localtime())
+OUTPUT_PATH = f"output/{START_TIME}/"
+QUERY_FILENAME = f"emails-{START_TIME}.csv"
+COMBINED_FILENAME = f"combined-emails-{START_TIME}.csv"
+AGENT_LIST = [
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.3',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/43.4',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
+]
 
 
 class PrintColors:
@@ -59,7 +69,7 @@ class PrintColors:
 
 def getQueryText(text="default text", queryurl=BING_QUERY_URL):
     headers = {
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+        'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
     }
     url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
     request_result = requests.get(url, headers=headers)
@@ -117,15 +127,17 @@ def filterFoundTerms(foundTerms):
     foundTermsFiltered = []
     foundTerms = list(set(foundTerms))
     # Secondary checks
-    if SECONDARY_EMAIL_CHECK:
-        for mail in foundTerms:
-            is_valid_address = validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False)
-            print(f"{PrintColors.GREEN}{is_valid_address}{PrintColors.RESET}  : {mail}") if is_valid_address else print(f"{PrintColors.RED}{is_valid_address}{PrintColors.RESET} : {mail}")
-            if is_valid_address:
-                foundTermsFiltered.append(mail)
-            # if SLOW_EMAIL_CHECK:
-            #     is_valid = validate_email(email_address=mail, check_format=True, check_blacklist=True, check_dns=False, dns_timeout=10, check_smtp=True, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=True)
-            #     print(f"{PrintColors.BOLD}{is_valid}{PrintColors.RESET} : {mail}")
+    for mail in foundTerms:
+        checks = []
+        # if False:
+        #     checks.append(False)
+        if SECONDARY_EMAIL_CHECK:
+            checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
+
+        passAllChecks = all(checks)
+        if passAllChecks:
+            foundTermsFiltered.append(mail)
+        print(f"{PrintColors.GREEN}{passAllChecks}{PrintColors.RESET}  : {mail}") if passAllChecks else print(f"{PrintColors.RED}{passAllChecks}{PrintColors.RESET} : {mail}")
 
     if foundTermsFiltered == []:
         print(f"{PrintColors.RED}Warning: No valid emails found.{PrintColors.RESET}")
@@ -181,6 +193,7 @@ def createCombinedCSV(prefix=''):
 
 def main():
     print("Starting Search...")
+    os.mkdir(OUTPUT_PATH)
     foundEmails = runSearch()
     print(f"Found {PrintColors.BOLD}{foundEmails}{PrintColors.RESET} emails.")
     createCombinedCSV(f"{foundEmails}_")
