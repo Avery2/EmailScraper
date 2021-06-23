@@ -4,7 +4,7 @@ Takes input csv of search terms, does bing search, outputs found emails.
 
 ## Installing (not comprehensive)
 
-Run these commands (I forgot if there were more).
+Run these commands (not comprehensive because I forgot if there were more).
 
 `python -m pip install py3-validate-email`
 
