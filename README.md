@@ -4,7 +4,13 @@ Takes input csv of search terms, does bing search, outputs found emails.
 
 ## Running
 
-Edit parameters at top of `main.py` then run in terminal: `python main.py` (or `python3 main.py`).
+### Run
+
+Run in terminal with: `python main.py` (or `python3 main.py`). Make sure you use python version 3.6 or above. Python 3.9 works best.
+
+### Options
+
+To configure your search, you can edit parameters at top of `main.py` and/or use the command line options below.
 
 Command line options:
 
@@ -17,8 +23,6 @@ Command line options:
 Example starting from row `10` and doing `5` searches:
 
 `python main.py -s 10 -n 5`
-
-Make sure you use python version 3.6 or above. Python 3.9 works best.
 
 ## Link Dump
 
