@@ -10,7 +10,7 @@ from validate_email import validate_email
 # the number of google searches it will do, if 0, will go forever
 NUM_SEARCH = 5
 DO_BING_SEARCH = True
-DO_GOOGLE_SEARCH = True
+DO_GOOGLE_SEARCH = False
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
 # Selects column/term to quote. The columns correspond to the columns of the input csv. (zero indexed)
 QUOTE_EACH_WORD = True
