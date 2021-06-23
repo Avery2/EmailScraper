@@ -1,6 +1,6 @@
 # Email Scraper
 
-Takes input csv of search terms, does bing search, outputs found emails.
+Takes input csv of search terms, does Bing search, outputs found emails.
 
 ## Installing (not comprehensive)
 
