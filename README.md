@@ -12,7 +12,7 @@ Command line options:
 
 - `-i <inputfilepath>`: specify input file
 - `-s <startrow>`: specify row to start
-- `-n <numsearch>`: specify number of searches to do
+- `-n <numsearch>`: specify number of searches to do (`0` to process entire input file)
 
 Example starting from row `10` and doing `5` searches:
 
