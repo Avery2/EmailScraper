@@ -6,13 +6,15 @@ import re
 import time
 from validate_email import validate_email
 import random
+import sys
+import getopt
 
 # ==== GENERAL ====
-START_ROW = 1
-NUM_SEARCH = 5  # the number of google searches it will do, if 0, will go forever
+startRow = 1
+numSearch = 5  # the number of google searches it will do, if 0, will go forever
+inputFile = 'input/TestCaseEmailScript.csv'
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = False
-INPUT_CSV = 'input/TestCaseEmailScript.csv'
 DELAY_SECONDS = 0.01
 
 # ==== OPTIONS ====
@@ -151,11 +153,11 @@ def runSearch():
     foundEmails = 0
 
     # csv output: do search and write to a csv
-    with open(INPUT_CSV, newline='') as csvfile:
+    with open(inputFile, newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',')
         # iterate through rows of CSV
         for rowIndex, row in enumerate(spamreader):
-            if rowIndex < START_ROW:
+            if rowIndex < startRow:
                 f.write(f"\n")
                 continue
             if ' '.join(row).replace(',', ' ').strip() == '':  # empty row check
@@ -168,7 +170,7 @@ def runSearch():
             foundEmails += len(validEmails)
             f.write(f"{', '.join(validEmails)}\n")
             queryNum += 1
-            if NUM_SEARCH != 0 and queryNum >= NUM_SEARCH:
+            if numSearch != 0 and queryNum >= numSearch:
                 break
 
     csvfile.close()
@@ -178,7 +180,7 @@ def runSearch():
 
 def createCombinedCSV(prefix=''):
     # csv output: write a new combined csv
-    with open(INPUT_CSV, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
+    with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
         writer = csv.writer(w)
         r1, r2 = csv.reader(f1), csv.reader(f2)
         while True:
@@ -191,7 +193,28 @@ def createCombinedCSV(prefix=''):
     w.close()
 
 
-def main():
+def main(argv):
+
+    global inputFile
+    global startRow
+    global numSearch
+
+    try:
+        opts, args = getopt.getopt(argv, "hi:o:s:n:", ["ifile=", "ofile="])
+    except getopt.GetoptError:
+        print('main.py -i <inputfilepath> -s <startrow> -n <numsearch>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('main.py -i <inputfilepath> -s <startrow> -n <numsearch>')
+            sys.exit()
+        elif opt in ("-i", "--ifile"):
+            inputFile = arg
+        elif opt in ("-s", "--ofile"):
+            startRow = int(arg)
+        elif opt in ("-n", "--ofile"):
+            numSearch = int(arg)
+
     print("Starting Search...")
     os.mkdir(OUTPUT_PATH)
     foundEmails = runSearch()
@@ -201,4 +224,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
