@@ -1,6 +1,6 @@
 # Email Scraper
 
-Takes a csv as input for search terms, checks google page for emails, outputs as txt file with found emails.
+Takes input csv of search terms, does bing search, outputs found emails.
 
 ## Running
 
@@ -21,8 +21,6 @@ Example starting from row `10` and doing `5` searches:
 Make sure you use python version 3.6 or above. Python 3.9 works best.
 
 ## Link Dump
-
-<!-- []() -->
 
 - [Writing to file in python](https://www.w3schools.com/python/python_file_write.asp)
 
