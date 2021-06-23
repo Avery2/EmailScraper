@@ -8,7 +8,7 @@ from validate_email import validate_email
 
 # ==== GENERAL ====
 START_ROW = 1
-NUM_SEARCH = 5  # the number of google searches it will do, if 0, will go forever
+NUM_SEARCH = 10  # the number of google searches it will do, if 0, will go forever
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = False
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
@@ -27,8 +27,9 @@ GOOGLE_QUERY_URL = 'https://google.com/search?q='
 BING_QUERY_URL = 'https://bing.com/search?q='
 GOOGLE_BOT_MESSAGE = "This page checks to see if it's really you sending the requests, and not a robot."
 START_TIME = time.strftime("h%Hm%Ms%S", time.localtime())
-QUERY_FILENAME = f"output/foundemails-{START_TIME}.csv"
-COMBINED_FILENAME = f"output/foundemails-combined-{START_TIME}.csv"
+OUTPUT_PATH = "output/"
+QUERY_FILENAME = f"foundemails-{START_TIME}.csv"
+COMBINED_FILENAME = f"foundemails-combined-{START_TIME}.csv"
 
 
 class PrintColors:
@@ -87,19 +88,27 @@ def findemail(terms=["default text"]):
 def rowToQueries(row):
     for i, elem in enumerate(row):
         row[i] = elem.replace(',', ' ').strip()
-
+    row.append("email")
+    row = [e for e in row if e]
     queries = []
-    for i, foo in enumerate(row):
-        query = ''
-        for j, elem in enumerate(row):
-            if QUOTE_EACH_WORD and i == j:
-                query += " \"" + elem + "\""
-            else:
-                query += " " + elem
-        query += "email"
-        queries.append(query)
-        if not QUOTE_EACH_WORD:
-            break
+
+    # no quotes
+    query = ''
+    for j, elem in enumerate(row):
+        query += f" {elem}"
+    queries.append(query.strip())
+
+    # quotes each word
+    if QUOTE_EACH_WORD:
+        for i, foo in enumerate(row):
+            query = ''
+            for j, elem in enumerate(row):
+                if QUOTE_EACH_WORD and i == j:
+                    # query += " \"" + elem + "\""
+                    query += f" \"{elem}\""
+                else:
+                    query += f" {elem}"
+            queries.append(query.strip())
 
     return queries
 
@@ -125,8 +134,9 @@ def filterFoundTerms(foundTerms):
 
 
 def runSearch():
-    f = open(QUERY_FILENAME, "a")
+    f = open(OUTPUT_PATH+QUERY_FILENAME, "a")
     queryNum = 0
+    foundEmails = 0
 
     # csv output: do search and write to a csv
     with open(INPUT_CSV, newline='') as csvfile:
@@ -143,6 +153,7 @@ def runSearch():
             print(f"{PrintColors.BOLD}{queryNum}{PrintColors.RESET} " + f"\n{PrintColors.BOLD}query list:{PrintColors.RESET} {row}\n{PrintColors.BOLD}search query(s):{PrintColors.RESET} {queryTerms}")
             validEmails = findemail(queryTerms)
             print(f"{PrintColors.BOLD}valid emails:{PrintColors.RESET} {len(validEmails)}\n" + "\n")
+            foundEmails += len(validEmails)
             f.write(f"{', '.join(validEmails)}\n")
             queryNum += 1
             if NUM_SEARCH != 0 and queryNum >= NUM_SEARCH:
@@ -150,11 +161,12 @@ def runSearch():
 
     csvfile.close()
     f.close()
+    return foundEmails
 
 
-def createCombinedCSV():
+def createCombinedCSV(prefix=''):
     # csv output: write a new combined csv
-    with open(INPUT_CSV, 'r') as f1, open(QUERY_FILENAME, 'r') as f2, open(COMBINED_FILENAME, 'w') as w:
+    with open(INPUT_CSV, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
         writer = csv.writer(w)
         r1, r2 = csv.reader(f1), csv.reader(f2)
         while True:
@@ -169,9 +181,10 @@ def createCombinedCSV():
 
 def main():
     print("Starting Search...")
-    runSearch()
-    createCombinedCSV()
-    print(f"Done.\nOutput in {PrintColors.BOLD}./{QUERY_FILENAME}{PrintColors.RESET} and {PrintColors.BOLD}./{COMBINED_FILENAME}{PrintColors.RESET}")
+    foundEmails = runSearch()
+    print(f"Found {PrintColors.BOLD}{foundEmails}{PrintColors.RESET} emails.")
+    createCombinedCSV(f"{foundEmails}_")
+    print(f"Output in {PrintColors.BOLD}./{OUTPUT_PATH+QUERY_FILENAME}{PrintColors.RESET} and {PrintColors.BOLD}./{OUTPUT_PATH+COMBINED_FILENAME}{PrintColors.RESET}")
 
 
 if __name__ == "__main__":
