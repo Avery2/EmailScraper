@@ -6,20 +6,19 @@ import re
 import time
 from validate_email import validate_email
 
-# ==== CHANGE THESE AS NEEDED ====
-# the number of google searches it will do, if 0, will go forever
-NUM_SEARCH = 5
+# ==== GENERAL ====
+START_ROW = 1
+NUM_SEARCH = 5  # the number of google searches it will do, if 0, will go forever
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = False
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
-QUOTE_EACH_WORD = True
-# delay between searches (to hopefully avoid bot)
 DELAY_SECONDS = 0.01
-# row to start from
-START_ROW = 1
+
+# ==== OPTIONS ====
+QUOTE_EACH_WORD = True  # if False quotes none
+EMAIL_NEEDS_NAME = True  # filters emails so they must contain some part of the person's name
 
 # ==== PROBABLY LEAVE ALONE ====
-# Run additional checks on emails
 SECONDARY_EMAIL_CHECK = True
 SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 
@@ -33,7 +32,7 @@ combinedFilename = f"output/foundemails-combined-{current_time}.csv"
 
 
 def getQueryText(text="default text", queryurl=BING_QUERY_URL):
-    headers = {  # This helps being not marked as bot see https://pknerd.medium.com/5-strategies-to-write-unblock-able-web-scrapers-in-python-5e40c147bdaf for more
+    headers = {
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
     }
     url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
@@ -41,7 +40,6 @@ def getQueryText(text="default text", queryurl=BING_QUERY_URL):
     soup = bs4.BeautifulSoup(request_result.text,
                              "html.parser")
     txt = soup.get_text()
-
     # print(txt)
     return txt
 
