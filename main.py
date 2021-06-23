@@ -26,9 +26,9 @@ SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
 BING_QUERY_URL = 'https://bing.com/search?q='
 GOOGLE_BOT_MESSAGE = "This page checks to see if it's really you sending the requests, and not a robot."
-current_time = time.strftime("h%Hm%Ms%S", time.localtime())
-queryFilename = f"output/foundemails-{current_time}.csv"
-combinedFilename = f"output/foundemails-combined-{current_time}.csv"
+START_TIME = time.strftime("h%Hm%Ms%S", time.localtime())
+QUERY_FILENAME = f"output/foundemails-{START_TIME}.csv"
+COMBINED_FILENAME = f"output/foundemails-combined-{START_TIME}.csv"
 
 
 def getQueryText(text="default text", queryurl=BING_QUERY_URL):
@@ -102,7 +102,7 @@ def filterFoundTerms(foundTerms):
 
 
 def runSearch():
-    f = open(queryFilename, "a")
+    f = open(QUERY_FILENAME, "a")
     queryNum = 0
 
     # csv output: do search and write to a csv
@@ -131,7 +131,7 @@ def runSearch():
 
 def createCombinedCSV():
     # csv output: write a new combined csv
-    with open(INPUT_CSV, 'r') as f1, open(queryFilename, 'r') as f2, open(combinedFilename, 'w') as w:
+    with open(INPUT_CSV, 'r') as f1, open(QUERY_FILENAME, 'r') as f2, open(COMBINED_FILENAME, 'w') as w:
         writer = csv.writer(w)
         r1, r2 = csv.reader(f1), csv.reader(f2)
         while True:
@@ -148,7 +148,7 @@ def main():
     print("Starting Search...")
     runSearch()
     createCombinedCSV()
-    print(f"Done.\nOutput in ./{queryFilename} and ./{combinedFilename}")
+    print(f"Done.\nOutput in ./{QUERY_FILENAME} and ./{COMBINED_FILENAME}")
 
 
 if __name__ == "__main__":
