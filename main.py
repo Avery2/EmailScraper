@@ -12,7 +12,6 @@ NUM_SEARCH = 5
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = False
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
-# Selects column/term to quote. The columns correspond to the columns of the input csv. (zero indexed)
 QUOTE_EACH_WORD = True
 # delay between searches (to hopefully avoid bot)
 DELAY_SECONDS = 0.01
