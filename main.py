@@ -8,12 +8,11 @@ from validate_email import validate_email
 
 # ==== CHANGE THESE AS NEEDED ====
 # the number of google searches it will do, if 0, will go forever
-NUM_SEARCH = 10
+NUM_SEARCH = 5
 DO_BING_SEARCH = True
-DO_GOOGLE_SEARCH = True
+DO_GOOGLE_SEARCH = False
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
-# Selects column/term to quote. The columns correspond to the columns of the input csv. (zero indexed)
-ROW_QUOTE = 2
+QUOTE_EACH_WORD = True
 # delay between searches (to hopefully avoid bot)
 DELAY_SECONDS = 0.01
 # row to start from
@@ -47,48 +46,60 @@ def getQueryText(text="default text", queryurl=BING_QUERY_URL):
     return txt
 
 
-def findemail(text="default text"):
+def findemail(terms=["default text"]):
     txt = ''
-    if DO_BING_SEARCH:
-        txt += getQueryText(text, BING_QUERY_URL)
-    if DO_GOOGLE_SEARCH:
-        txt += getQueryText(text, GOOGLE_QUERY_URL)
+    for term in terms:
+        if DO_BING_SEARCH:
+            txt += getQueryText(term, BING_QUERY_URL)
+        if DO_GOOGLE_SEARCH:
+            txt += getQueryText(term, GOOGLE_QUERY_URL)
     if len(re.findall(GOOGLE_BOT_MESSAGE, txt)) > 0:
         print("\nWARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.\n")
 
-    # myRegularExpression = "[^\s]+@[^\s]+\.[^\s]+"
     myRegularExpression = r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
-    return re.findall(myRegularExpression, txt)
+    foundTerms = re.findall(myRegularExpression, txt)
+    return filterFoundTerms(foundTerms)
 
 
-def rowToStr(row):
-    my_str = ''
+def rowToQueries(row):
     for i, elem in enumerate(row):
-        row[i] = elem.replace(',', ' ')
-    for i, elem in enumerate(row):
-        if i == ROW_QUOTE:
-            my_str += " \"" + elem + "\""
-        else:
-            my_str += " " + elem
-    my_str += " email"
-    return my_str
+        row[i] = elem.replace(',', ' ').strip()
+
+    queries = []
+    for i, foo in enumerate(row):
+        query = ''
+        for j, elem in enumerate(row):
+            if QUOTE_EACH_WORD and i == j:
+                query += " \"" + elem + "\""
+            else:
+                query += " " + elem
+        query += "email"
+        queries.append(query)
+        if not QUOTE_EACH_WORD:
+            break
+
+    return queries
 
 
 def filterFoundTerms(foundTerms):
     foundTermsFiltered = []
-    for mail in foundTerms:
-        is_valid_address = validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False)
-        print(f"{is_valid_address} : {mail}")
-        if SECONDARY_EMAIL_CHECK:
+
+    # Secondary checks
+    if SECONDARY_EMAIL_CHECK:
+        for mail in foundTerms:
+            is_valid_address = validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False)
+            print(f"{is_valid_address} : {mail}")
             if is_valid_address:
                 foundTermsFiltered.append(mail)
             if SLOW_EMAIL_CHECK:
                 is_valid = validate_email(email_address=mail, check_format=True, check_blacklist=True, check_dns=False, dns_timeout=10, check_smtp=True, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=True)
                 print(f"{is_valid} : {mail}")
-        else:
-            foundTermsFiltered.append(mail)
+            else:
+                foundTermsFiltered.append(mail)
 
-    foundTermsFiltered = list(set(foundTermsFiltered))  # remove duplicates
+    # Remove duplicates
+    foundTermsFiltered = list(set(foundTermsFiltered))
+
     return foundTermsFiltered
 
 
@@ -107,11 +118,10 @@ def runSearch():
             if ' '.join(row).replace(',', ' ').strip() == '':  # empty row check
                 continue
             time.sleep(DELAY_SECONDS)
-            searchTerm = rowToStr(row)
-            print(f"{queryNum} " + "---" * 9 + f"\nquery list: {row}\nsearch query: {searchTerm}")
-            foundTerms = findemail(searchTerm)
-            validEmails = filterFoundTerms(foundTerms)
-            print(f"found terms: {foundTerms}\nvalid emails: {validEmails}" + "---" * 10 + "\n")
+            queryTerms = rowToQueries(row)
+            print(f"{queryNum} " + "---" * 9 + f"\nquery list: {row}\nsearch query(s): {queryTerms}")
+            validEmails = findemail(queryTerms)
+            print(f"valid emails: {validEmails}" + "---" * 10 + "\n")
             f.write(f"{', '.join(validEmails)}\n")
             queryNum += 1
             if NUM_SEARCH != 0 and queryNum >= NUM_SEARCH:
