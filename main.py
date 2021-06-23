@@ -31,6 +31,31 @@ QUERY_FILENAME = f"output/foundemails-{START_TIME}.csv"
 COMBINED_FILENAME = f"output/foundemails-combined-{START_TIME}.csv"
 
 
+class PrintColors:
+
+    BLACK = "\u001b[30m"
+    RED = "\u001b[31m"
+    GREEN = "\u001b[32m"
+    YELLOW = "\u001b[33m"
+    BLUE = "\u001b[34m"
+    MAGENTA = "\u001b[35m"
+    CYAN = "\u001b[36m"
+    WHITE = "\u001b[37m"
+    RESET = "\u001b[0m"
+    BOLD = "\u001b[1m"
+    UNDERLINE = "\u001b[4m"
+    REVERSED = "\u001b[7m"
+
+    def reset(self):
+        print(self.RESET, end='')
+
+    def toggleRed(self):
+        print(self.GREEN, end='')
+
+    def toggleGreen(self):
+        print(self.GREEN, end='')
+
+
 def getQueryText(text="default text", queryurl=BING_QUERY_URL):
     headers = {
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
@@ -52,7 +77,7 @@ def findemail(terms=["default text"]):
         if DO_GOOGLE_SEARCH:
             txt += getQueryText(term, GOOGLE_QUERY_URL)
     if len(re.findall(GOOGLE_BOT_MESSAGE, txt)) > 0:
-        print("\nWARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.\n")
+        print(f"\n{PrintColors.RED}WARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.{PrintColors.RESET}\n")
 
     myRegularExpression = r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
     foundTerms = re.findall(myRegularExpression, txt)
@@ -81,22 +106,20 @@ def rowToQueries(row):
 
 def filterFoundTerms(foundTerms):
     foundTermsFiltered = []
-
+    foundTerms = list(set(foundTerms))
     # Secondary checks
     if SECONDARY_EMAIL_CHECK:
         for mail in foundTerms:
             is_valid_address = validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False)
-            print(f"{is_valid_address} : {mail}")
+            print(f"{PrintColors.GREEN}{is_valid_address}{PrintColors.RESET} : {mail}") if is_valid_address else print(f"{PrintColors.RED}{is_valid_address}{PrintColors.RESET} : {mail}")
             if is_valid_address:
                 foundTermsFiltered.append(mail)
-            if SLOW_EMAIL_CHECK:
-                is_valid = validate_email(email_address=mail, check_format=True, check_blacklist=True, check_dns=False, dns_timeout=10, check_smtp=True, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=True)
-                print(f"{is_valid} : {mail}")
-            else:
-                foundTermsFiltered.append(mail)
+            # if SLOW_EMAIL_CHECK:
+            #     is_valid = validate_email(email_address=mail, check_format=True, check_blacklist=True, check_dns=False, dns_timeout=10, check_smtp=True, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=True)
+            #     print(f"{PrintColors.BOLD}{is_valid}{PrintColors.RESET} : {mail}")
 
-    # Remove duplicates
-    foundTermsFiltered = list(set(foundTermsFiltered))
+    if foundTermsFiltered == []:
+        print(f"{PrintColors.RED}Warning: No valid emails found.{PrintColors.RESET}")
 
     return foundTermsFiltered
 
@@ -117,9 +140,9 @@ def runSearch():
                 continue
             time.sleep(DELAY_SECONDS)
             queryTerms = rowToQueries(row)
-            print(f"{queryNum} " + "---" * 9 + f"\nquery list: {row}\nsearch query(s): {queryTerms}")
+            print(f"{PrintColors.BOLD}{queryNum}{PrintColors.RESET} " + f"\n{PrintColors.BOLD}query list:{PrintColors.RESET} {row}\n{PrintColors.BOLD}search query(s):{PrintColors.RESET} {queryTerms}")
             validEmails = findemail(queryTerms)
-            print(f"valid emails: {validEmails}" + "---" * 10 + "\n")
+            print(f"{PrintColors.BOLD}valid emails:{PrintColors.RESET} {len(validEmails)}\n" + "\n")
             f.write(f"{', '.join(validEmails)}\n")
             queryNum += 1
             if NUM_SEARCH != 0 and queryNum >= NUM_SEARCH:
@@ -148,7 +171,7 @@ def main():
     print("Starting Search...")
     runSearch()
     createCombinedCSV()
-    print(f"Done.\nOutput in ./{QUERY_FILENAME} and ./{COMBINED_FILENAME}")
+    print(f"Done.\nOutput in {PrintColors.BOLD}./{QUERY_FILENAME}{PrintColors.RESET} and {PrintColors.BOLD}./{COMBINED_FILENAME}{PrintColors.RESET}")
 
 
 if __name__ == "__main__":
