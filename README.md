@@ -4,9 +4,22 @@ Takes a csv as input for search terms, checks google page for emails, outputs as
 
 ## Running
 
-Edit parameters at top of `main.js` then run in terminal: `python main.js` (or `python3 main.js`).
+Edit parameters at top of `main.py` then run in terminal: `python main.py` (or `python3 main.py`).
+
+Command line options:
+
+`main.py -i <inputfilepath> -s <startrow> -n <numsearch>`
+
+- `-i <inputfilepath>`: specify input file
+- `-s <startrow>`: specify row to start
+- `-n <numsearch>`: specify number of searches to do
+
+Example starting from row `10` and doing `5` searches:
+
+`python main.py -s 10 -n 5`
 
 Make sure you use python version 3.6 or above. Python 3.9 works best.
+
 ## Link Dump
 
 <!-- []() -->
