@@ -8,7 +8,7 @@ from validate_email import validate_email
 
 # ==== CHANGE THESE AS NEEDED ====
 # the number of google searches it will do, if 0, will go forever
-NUM_SEARCH = 0
+NUM_SEARCH = 10
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = True
 INPUT_CSV = 'input/TestCaseEmailScript.csv'
@@ -25,10 +25,12 @@ SECONDARY_EMAIL_CHECK = True
 SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 
 # ==== INITIALIZE VALUES ====
-queryNum = 0
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
 BING_QUERY_URL = 'https://bing.com/search?q='
 GOOGLE_BOT_MESSAGE = "This page checks to see if it's really you sending the requests, and not a robot."
+current_time = time.strftime("h%Hm%Ms%S", time.localtime())
+queryFilename = f"output/foundemails-{current_time}.csv"
+combinedFilename = f"output/foundemails-combined-{current_time}.csv"
 
 
 def getQueryText(text="default text", queryurl=BING_QUERY_URL):
@@ -90,48 +92,56 @@ def filterFoundTerms(foundTerms):
     return foundTermsFiltered
 
 
-current_time = time.strftime("h%H-m%M-s%S", time.localtime())
-f = open(f"output/foundemails-{current_time}.csv", "a")
+def runSearch():
+    f = open(queryFilename, "a")
+    queryNum = 0
 
-# csv output: do search and write to a csv
-with open(INPUT_CSV, newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=',')
-    # iterate through rows of CSV
-    for rowIndex, row in enumerate(spamreader):
-        if rowIndex < START_ROW:
-            f.write(f"\n")
-            continue
-        time.sleep(DELAY_SECONDS)
-        isNotEmptyRow = ' '.join(row).replace(',', ' ').strip() != ''
-        if isNotEmptyRow:
+    # csv output: do search and write to a csv
+    with open(INPUT_CSV, newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        # iterate through rows of CSV
+        for rowIndex, row in enumerate(spamreader):
+            if rowIndex < START_ROW:
+                f.write(f"\n")
+                continue
+            if ' '.join(row).replace(',', ' ').strip() == '':  # empty row check
+                continue
+            time.sleep(DELAY_SECONDS)
             searchTerm = rowToStr(row)
-            print(f"{queryNum} " + "---" * 9)
-            print(f"query list: {row}")
-            print(f"search query: {searchTerm}")
+            print(f"{queryNum} " + "---" * 9 + f"\nquery list: {row}\nsearch query: {searchTerm}")
             foundTerms = findemail(searchTerm)
-            print(f"found terms: {foundTerms}")
-            foundTerms = filterFoundTerms(foundTerms)
-            print(f"valid emails: {foundTerms}")
-            f.write(f"{', '.join(foundTerms)}\n")
-            print("---" * 10 + "\n")
+            validEmails = filterFoundTerms(foundTerms)
+            print(f"found terms: {foundTerms}\nvalid emails: {validEmails}" + "---" * 10 + "\n")
+            f.write(f"{', '.join(validEmails)}\n")
             queryNum += 1
-            if NUM_SEARCH == 0:
-                pass
-            elif queryNum >= NUM_SEARCH:
+            if NUM_SEARCH != 0 and queryNum >= NUM_SEARCH:
                 break
 
-# csv output: write a new combined csv
-with open(INPUT_CSV, 'r') as f1, open(f"output/foundemails-{current_time}.csv", 'r') as f2, open(f"output/foundemails-combined-{current_time}.csv", 'w') as w:
-    writer = csv.writer(w)
-    r1, r2 = csv.reader(f1), csv.reader(f2)
-    while True:
-        try:
-            writer.writerow(next(r1)+next(r2))
-        except StopIteration:
-            break
+    csvfile.close()
+    f.close()
 
-csvfile.close()
-f.close()
-f1.close()
-f2.close()
-w.close()
+
+def createCombinedCSV():
+    # csv output: write a new combined csv
+    with open(INPUT_CSV, 'r') as f1, open(queryFilename, 'r') as f2, open(combinedFilename, 'w') as w:
+        writer = csv.writer(w)
+        r1, r2 = csv.reader(f1), csv.reader(f2)
+        while True:
+            try:
+                writer.writerow(next(r1)+next(r2))
+            except StopIteration:
+                break
+    f1.close()
+    f2.close()
+    w.close()
+
+
+def main():
+    print("Starting Search...")
+    runSearch()
+    createCombinedCSV()
+    print(f"Done.\nOutput in ./{queryFilename} and ./{combinedFilename}")
+
+
+if __name__ == "__main__":
+    main()
