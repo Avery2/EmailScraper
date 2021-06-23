@@ -48,7 +48,4 @@ Example starting from row `1` (the header counts as row 0) and doing searches fo
 [[email regex]](https://emailregex.com/)
 [[email validation]](https://github.com/karolyi/py3-validate-email)
 [[workarounds need to randomize headers sometime]](https://pknerd.medium.com/5-strategies-to-write-unblock-able-web-scrapers-in-python-5e40c147bdaf)
-
-## Possible Expansions
-
-[Linkedin API](https://docs.microsoft.com/en-us/linkedin/)
+[[Linkedin API]](https://docs.microsoft.com/en-us/linkedin/)
