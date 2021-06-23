@@ -6,7 +6,7 @@ Takes a csv as input for search terms, checks google page for emails, outputs as
 
 Edit parameters at top of `main.js` then run in terminal: `python main.js` (or `python3 main.js`).
 
-Make sure you use python version 3.6 or above.
+Make sure you use python version 3.6 or above. Python 3.9 works best.
 ## Link Dump
 
 <!-- []() -->
