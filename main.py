@@ -98,10 +98,6 @@ def findemail(terms=["default text"]):
 
 
 def rowToQueries(row):
-    for i, elem in enumerate(row):
-        row[i] = elem.replace(',', ' ').strip()
-    row.append("email")
-    row = [e for e in row if e]
     queries = []
 
     # no quotes
@@ -163,6 +159,12 @@ def runSearch():
             if ' '.join(row).replace(',', ' ').strip() == '':  # empty row check
                 continue
             time.sleep(DELAY_SECONDS)
+
+            for i, elem in enumerate(row):
+                row[i] = elem.replace(',', ' ').strip()
+            row.append("email")
+            row = [e for e in row if e]
+
             queryTerms = rowToQueries(row)
             print(f"{PrintColors.BOLD}{queryNum}{PrintColors.RESET} " + f"\n{PrintColors.BOLD}query list:{PrintColors.RESET} {row}\n{PrintColors.BOLD}search query(s):{PrintColors.RESET} {queryTerms}")
             validEmails = findemail(queryTerms)
