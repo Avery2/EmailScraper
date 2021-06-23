@@ -32,6 +32,10 @@ Example starting from row `10` and doing `5` searches:
 
 `python main.py -s 10 -n 5`
 
+Example starting from row `1` (the header counts as row 0) and doing searches for the entire input file:
+
+`python main.py -s 1 -n 0`
+
 ## Link Dump
 
 [[Writing to file in python]](https://www.w3schools.com/python/python_file_write.asp)
