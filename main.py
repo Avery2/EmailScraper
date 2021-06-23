@@ -34,35 +34,29 @@ writeBlanks = True
 # Initialize values
 try_num = 0
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
-# BING_QUERY_URL = 'https://www.bing.com/search?q='
 BING_QUERY_URL = 'https://bing.com/search?q='
 
 
-def findemailhelper(text="default text", queryurl=BING_QUERY_URL):
-    # This function google searches the inputed text and returns all the text on the google search page
-
-    headers = {
+def getQueryText(text="default text", queryurl=BING_QUERY_URL):
+    headers = {  # This helps being not marked as bot see https://pknerd.medium.com/5-strategies-to-write-unblock-able-web-scrapers-in-python-5e40c147bdaf for more
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-    }  # I want to add more headers but heed a header list
-
+    }
     url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
     request_result = requests.get(url, headers=headers)
     soup = bs4.BeautifulSoup(request_result.text,
                              "html.parser")
     txt = soup.get_text()
 
-    # This print statement shows the raw text that is actually found for debugging (i.e. you have been flagged as a bot)
     # print(txt)
-
     return txt
 
 
 def findemail(text="default text"):
     txt = ''
     if doBingSearch:
-        txt += findemailhelper(text, BING_QUERY_URL)
+        txt += getQueryText(text, BING_QUERY_URL)
     if doGoogleSearch:
-        txt += findemailhelper(text, GOOGLE_QUERY_URL)
+        txt += getQueryText(text, GOOGLE_QUERY_URL)
 
     botMessage = "This page checks to see if it's really you sending the requests, and not a robot."
     if len(re.findall(botMessage, txt)) > 0:
