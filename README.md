@@ -2,6 +2,14 @@
 
 Takes input csv of search terms, does bing search, outputs found emails.
 
+## Installing (not comprehensive)
+
+Run these commands (I forgot if there were more).
+
+`python -m pip install py3-validate-email`
+
+`python -m pip install bs4`
+
 ## Running
 
 ### Run
@@ -49,7 +57,3 @@ Example starting from row `10` and doing `5` searches:
 ## Possible Expansions
 
 [Linkedin API](https://docs.microsoft.com/en-us/linkedin/)
-
-## Installing and stuff (not comprehensive)
-
-`python -m pip install py3-validate-email`
