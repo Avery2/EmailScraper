@@ -24,6 +24,11 @@ EMAIL_NEEDS_NAME = True  # filters emails so they must contain some part of the 
 # ==== PROBABLY LEAVE ALONE ====
 SECONDARY_EMAIL_CHECK = True
 SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
+MAKE_LOWERCASE = True
+
+# ==== DEBUGGING ====
+SORT_OUTPUT = True
+SHOW_TXT = False
 
 # ==== INITIALIZE VALUES ====
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
@@ -78,7 +83,8 @@ def getQueryText(text="default text", queryurl=BING_QUERY_URL):
     soup = bs4.BeautifulSoup(request_result.text,
                              "html.parser")
     txt = soup.get_text()
-    # print(txt)
+    if SHOW_TXT:
+        print(txt)
     return txt
 
 
@@ -123,7 +129,11 @@ def rowToQueries(row):
 
 def filterFoundTerms(foundTerms):
     foundTermsFiltered = []
+    if MAKE_LOWERCASE:
+        foundTerms = [e.lower() for e in foundTerms]  # to lowercase
     foundTerms = list(set(foundTerms))
+    if SORT_OUTPUT:
+        foundTerms.sort()
     # Secondary checks
     for mail in foundTerms:
         checks = []
