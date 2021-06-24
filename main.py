@@ -20,6 +20,7 @@ DELAY_SECONDS = 0.01
 # ==== OPTIONS ====
 QUOTE_EACH_WORD = True  # if False quotes none
 EMAIL_NEEDS_NAME = True  # filters emails so they must contain some part of the person's name
+CREATE_COMBINED = True
 
 # ==== PROBABLY LEAVE ALONE ====
 SECONDARY_EMAIL_CHECK = True
@@ -231,8 +232,9 @@ def main(argv):
     os.mkdir(OUTPUT_PATH)
     foundEmails = runSearch()
     print(f"Found {PrintColors.BOLD}{foundEmails}{PrintColors.RESET} emails.")
-    createCombinedCSV(f"{foundEmails}_")
-    print(f"Output in {PrintColors.BOLD}./{OUTPUT_PATH+QUERY_FILENAME}{PrintColors.RESET} and {PrintColors.BOLD}./{OUTPUT_PATH+COMBINED_FILENAME}{PrintColors.RESET}")
+    if CREATE_COMBINED:
+        createCombinedCSV(f"{foundEmails}_")
+    print(f"Output in {PrintColors.BOLD}./{OUTPUT_PATH}{PrintColors.RESET}")
 
 
 if __name__ == "__main__":
