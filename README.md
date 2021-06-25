@@ -12,7 +12,7 @@ Run these commands (not comprehensive because I forgot if there were more).
 
 ## Running
 
-### Run
+### How To Run
 
 Run in terminal with: `python main.py` (or `python3 main.py`). 
 You must use python version 3.6 or above. 
