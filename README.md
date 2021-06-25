@@ -72,7 +72,7 @@ DO_PRIMARY_EMAIL_CHECK = True # Filters emails using the validate_email package
 
 Secondary filters. Seconary filters are only applied to create a seperate "filtered" csv. This is because these filters might be too strong and remove all/most emails.
 ```
-APPLY_NAME_FILTER = False # Filters emails so they must contain some part of the person's name
+APPLY_SECONDARY_FILTERS = True # Does secondary filtering based on custom functions
 ```
 
 Debugging
