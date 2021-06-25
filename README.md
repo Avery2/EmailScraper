@@ -38,6 +38,19 @@ Example starting from row `1` (the header counts as row 0) and doing searches fo
 
 `python main.py -s 1 -n 0`
 
+## Other
+
+Code assumes the input file has this structure:
+
+```
+1st column = first name
+2nd column = last name
+3rd column = company/university
+4th column = key term 1
+5th column = key term 2
+...
+```
+
 ## Link Dump
 
 [[Writing to file in python]](https://www.w3schools.com/python/python_file_write.asp)
