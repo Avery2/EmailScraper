@@ -11,26 +11,27 @@ import getopt
 
 # ==== GENERAL ====
 startRow = 1
-numSearch = 5  # the number of google searches it will do, if 0, will go forever
+numSearch = 5
 inputFile = 'input/TestCaseEmailScript.csv'
 DO_BING_SEARCH = True
 DO_GOOGLE_SEARCH = False
-DELAY_SECONDS = 0.01
+DELAY_SECONDS = 0
 
 # ==== OPTIONS ====
-QUOTE_EACH_WORD = True  # if False quotes none
-EMAIL_NEEDS_NAME = True  # filters emails so they must contain some part of the person's name
+QUOTE_EACH_WORD = True
 CREATE_COMBINED = True
-APPLY_NAME_FILTER = False
 
-# ==== PROBABLY LEAVE ALONE ====
-SECONDARY_EMAIL_CHECK = True
-SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
-MAKE_LOWERCASE = True
+# ==== PRIMARY FILTERS ====
+DO_PRIMARY_EMAIL_CHECK = True
+# SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
+
+# ==== SECONDARY FILTERS ====
+APPLY_NAME_FILTER = False
 
 # ==== DEBUGGING ====
 SORT_OUTPUT = True
 SHOW_TXT = False
+MAKE_LOWERCASE = True
 
 # ==== INITIALIZE VALUES ====
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
@@ -102,7 +103,7 @@ def findemail(terms=["default text"]):
             # this is where we can add filters that always happen
             # if False:
             #     checks.append(False)
-            if SECONDARY_EMAIL_CHECK:
+            if DO_PRIMARY_EMAIL_CHECK:
                 checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
 
             passAllChecks = all(checks)
