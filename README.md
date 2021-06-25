@@ -106,6 +106,13 @@ def filterExample(emails):
 # Call Function
 foundEmails = filterExample(foundEmails)
 ```
+Template that does nothing.
+```
+def filterTemplate(emails):
+    return emails
+
+foundEmails = filterTemplate(emails)
+```
 
 ## Link Dump
 
