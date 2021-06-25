@@ -94,6 +94,20 @@ Code assumes the input file has this structure:
 ...
 ```
 
+Example filter function that would go in the `FILTER LOGIC` section of the `applySecondaryFilters` function in case you want to apply your own filter.
+```
+def filterExample(foundEmails):
+    # Set first email to None if it exists
+    if foundEmails[0]:
+        foundEmails[0] = None
+    # Filter None out of list
+    foundEmails = list(filter(None, foundEmails))
+    return foundEmails
+# Call Function; Update Stats
+foundEmails, n = filterExample(foundEmails)
+numFiltered += n
+```
+
 ## Link Dump
 
 [[Writing to file in python]](https://www.w3schools.com/python/python_file_write.asp)
