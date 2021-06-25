@@ -21,6 +21,7 @@ DELAY_SECONDS = 0.01
 QUOTE_EACH_WORD = True  # if False quotes none
 EMAIL_NEEDS_NAME = True  # filters emails so they must contain some part of the person's name
 CREATE_COMBINED = True
+APPLY_NAME_FILTER = False
 
 # ==== PROBABLY LEAVE ALONE ====
 SECONDARY_EMAIL_CHECK = True
@@ -51,7 +52,6 @@ AGENT_LIST = [
 
 
 class PrintColors:
-
     BLACK = "\u001b[30m"
     RED = "\u001b[31m"
     GREEN = "\u001b[32m"
@@ -75,21 +75,46 @@ class PrintColors:
         print(self.GREEN, end='')
 
 
-def getQueryText(text="default text", queryurl=BING_QUERY_URL):
-    headers = {
-        'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
-    }
-    url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
-    request_result = requests.get(url, headers=headers)
-    soup = bs4.BeautifulSoup(request_result.text,
-                             "html.parser")
-    txt = soup.get_text()
-    if SHOW_TXT:
-        print(txt)
-    return txt
-
-
 def findemail(terms=["default text"]):
+    def getQueryText(text="default text", queryurl=BING_QUERY_URL):
+        headers = {
+            'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
+        }
+        url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
+        request_result = requests.get(url, headers=headers)
+        soup = bs4.BeautifulSoup(request_result.text,
+                                 "html.parser")
+        txt = soup.get_text()
+        if SHOW_TXT:
+            print(txt)
+        return txt
+
+    def filterFoundTerms(foundTerms):
+        foundTermsFiltered = []
+        if MAKE_LOWERCASE:
+            foundTerms = [e.lower() for e in foundTerms]  # to lowercase
+        foundTerms = list(set(foundTerms))
+        if SORT_OUTPUT:
+            foundTerms.sort()
+        # Secondary checks
+        for mail in foundTerms:
+            checks = []
+            # this is where we can add filters that always happen
+            # if False:
+            #     checks.append(False)
+            if SECONDARY_EMAIL_CHECK:
+                checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
+
+            passAllChecks = all(checks)
+            if passAllChecks:
+                foundTermsFiltered.append(mail)
+            print(f"{PrintColors.GREEN}{passAllChecks}{PrintColors.RESET}  : {mail}") if passAllChecks else print(f"{PrintColors.RED}{passAllChecks}{PrintColors.RESET} : {mail}")
+
+        if foundTermsFiltered == []:
+            print(f"{PrintColors.RED}Warning: No valid emails found.{PrintColors.RESET}")
+
+        return foundTermsFiltered
+
     txt = ''
     for term in terms:
         if DO_BING_SEARCH:
@@ -104,60 +129,33 @@ def findemail(terms=["default text"]):
     return filterFoundTerms(foundTerms)
 
 
-def rowToQueries(row):
-    queries = []
-
-    # no quotes
-    query = ''
-    for j, elem in enumerate(row):
-        query += f" {elem}"
-    queries.append(query.strip())
-
-    # quotes each word
-    if QUOTE_EACH_WORD:
-        for i, foo in enumerate(row):
-            query = ''
-            for j, elem in enumerate(row):
-                if QUOTE_EACH_WORD and i == j:
-                    # query += " \"" + elem + "\""
-                    query += f" \"{elem}\""
-                else:
-                    query += f" {elem}"
-            queries.append(query.strip())
-
-    return queries
-
-
-def filterFoundTerms(foundTerms):
-    foundTermsFiltered = []
-    if MAKE_LOWERCASE:
-        foundTerms = [e.lower() for e in foundTerms]  # to lowercase
-    foundTerms = list(set(foundTerms))
-    if SORT_OUTPUT:
-        foundTerms.sort()
-    # Secondary checks
-    for mail in foundTerms:
-        checks = []
-        # if False:
-        #     checks.append(False)
-        if SECONDARY_EMAIL_CHECK:
-            checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
-
-        passAllChecks = all(checks)
-        if passAllChecks:
-            foundTermsFiltered.append(mail)
-        print(f"{PrintColors.GREEN}{passAllChecks}{PrintColors.RESET}  : {mail}") if passAllChecks else print(f"{PrintColors.RED}{passAllChecks}{PrintColors.RESET} : {mail}")
-
-    if foundTermsFiltered == []:
-        print(f"{PrintColors.RED}Warning: No valid emails found.{PrintColors.RESET}")
-
-    return foundTermsFiltered
-
-
 def runSearch():
+    def rowToQueries(row):
+        queries = []
+
+        # no quotes
+        query = ''
+        for j, elem in enumerate(row):
+            query += f" {elem}"
+        queries.append(query.strip())
+
+        # quotes each word
+        if QUOTE_EACH_WORD:
+            for i, foo in enumerate(row):
+                query = ''
+                for j, elem in enumerate(row):
+                    if QUOTE_EACH_WORD and i == j:
+                        # query += " \"" + elem + "\""
+                        query += f" \"{elem}\""
+                    else:
+                        query += f" {elem}"
+                queries.append(query.strip())
+
+        return queries
+
     f = open(OUTPUT_PATH+QUERY_FILENAME, "a")
     queryNum = 0
-    foundEmails = 0
+    numFoundEmails = 0
 
     # csv output: do search and write to a csv
     with open(inputFile, newline='') as csvfile:
@@ -180,7 +178,7 @@ def runSearch():
             print(f"{PrintColors.BOLD}{queryNum}{PrintColors.RESET} " + f"\n{PrintColors.BOLD}query list:{PrintColors.RESET} {row}\n{PrintColors.BOLD}search query(s):{PrintColors.RESET} {queryTerms}")
             validEmails = findemail(queryTerms)
             print(f"{PrintColors.BOLD}valid emails:{PrintColors.RESET} {len(validEmails)}\n" + "\n")
-            foundEmails += len(validEmails)
+            numFoundEmails += len(validEmails)
             f.write(f"{', '.join(validEmails)}\n")
             queryNum += 1
             if numSearch != 0 and queryNum >= numSearch:
@@ -188,7 +186,7 @@ def runSearch():
 
     csvfile.close()
     f.close()
-    return foundEmails
+    return numFoundEmails
 
 
 def createCombinedCSV(prefix=''):
@@ -199,6 +197,50 @@ def createCombinedCSV(prefix=''):
         while True:
             try:
                 writer.writerow(next(r1)+next(r2))
+            except StopIteration:
+                break
+    f1.close()
+    f2.close()
+    w.close()
+
+
+def createFilteredCSV(prefix=''):
+    # this is where we can add secondary filters that apply to a new csv
+
+    numFiltered = 0
+
+    def applyNameFilter(inputRows, foundEmails):
+        nonlocal numFiltered
+        print(f"{PrintColors.BOLD}input:{PrintColors.RESET}  {inputRows}")
+        print(f"{PrintColors.BOLD}emails: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
+
+        # == Filter logic ==
+        print(f"{PrintColors.BOLD}Use as filter:{PrintColors.RESET} {inputRows[0:2]}")
+        setInput = set(''.join(inputRows[0:2]))
+
+        for index, email in enumerate(foundEmails):
+            setEmail = set(email)
+            hasCommonChar = setInput & setEmail
+            if not hasCommonChar:
+                numFiltered += 1
+                foundEmails[index] = None
+
+        foundEmails = list(filter(None, foundEmails))
+        # == !Filter logic ==
+
+        print(f"{PrintColors.BOLD}Filtered: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
+
+        print(f"\nSecondary filters filtered {PrintColors.BOLD}{numFiltered}{PrintColors.RESET} emails.\n")
+
+        return inputRows, foundEmails
+
+    with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
+        writer = csv.writer(w)
+        r1, r2 = csv.reader(f1), csv.reader(f2)
+        while True:
+            try:
+                nr1, nr2 = applyNameFilter(next(r1), next(r2))
+                writer.writerow(nr1+nr2)
             except StopIteration:
                 break
     f1.close()
@@ -230,10 +272,12 @@ def main(argv):
 
     print("Starting Search...")
     os.mkdir(OUTPUT_PATH)
-    foundEmails = runSearch()
-    print(f"Found {PrintColors.BOLD}{foundEmails}{PrintColors.RESET} emails.")
+    numFoundEmails = runSearch()
+    print(f"Found {PrintColors.BOLD}{numFoundEmails}{PrintColors.RESET} emails.")
+    if APPLY_NAME_FILTER:
+        createFilteredCSV(f"{numFoundEmails}-filtered_")
     if CREATE_COMBINED:
-        createCombinedCSV(f"{foundEmails}_")
+        createCombinedCSV(f"{numFoundEmails}_")
     print(f"Output in {PrintColors.BOLD}./{OUTPUT_PATH}{PrintColors.RESET}")
 
 
