@@ -100,7 +100,7 @@ def findemail(terms=["default text"]):
         # Secondary checks
         for mail in foundTerms:
             checks = []
-            # this is where we can add filters that always happen
+            # PRIMARY FILTERS HERE
             # if False:
             #     checks.append(False)
             if DO_PRIMARY_EMAIL_CHECK:
@@ -206,33 +206,40 @@ def createCombinedCSV(prefix=''):
 
 
 def createFilteredCSV(prefix=''):
-    # this is where we can add secondary filters that apply to a new csv
+    # SECONDARY FILTERS that apply to a new csv
 
     numFiltered = 0
 
-    def applyNameFilter(inputRows, foundEmails):
-        nonlocal numFiltered
+    def applySecondaryFilters(inputRows, foundEmails):
+        # NOTES
+        # This function takes in two lists of strings: "inputRows" and "foundEmails"
+        # You can filter the "foundEmails" list here
+
         print(f"{PrintColors.BOLD}input:{PrintColors.RESET}  {inputRows}")
         print(f"{PrintColors.BOLD}emails: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
 
-        # == Filter logic ==
-        print(f"{PrintColors.BOLD}Use as filter:{PrintColors.RESET} {inputRows[0:2]}")
-        setInput = set(''.join(inputRows[0:2]))
+        # === START FILTER LOGIC ===
 
-        for index, email in enumerate(foundEmails):
-            setEmail = set(email)
-            hasCommonChar = setInput & setEmail
-            if not hasCommonChar:
-                numFiltered += 1
-                foundEmails[index] = None
+        def filterNoSharedChar(emails):
+            print(f"{PrintColors.BOLD}Use as filter:{PrintColors.RESET} {inputRows[0:2]}")
+            setInput = set(''.join(inputRows[0:2]))
+            for index, email in enumerate(emails):
+                setEmail = set(email)
+                hasCommonChar = setInput & setEmail
+                if not hasCommonChar:
+                    emails[index] = None
+            emails = list(filter(None, emails))
+            return emails
 
+        # Call filtering function
+        foundEmails = filterNoSharedChar(foundEmails)
+
+        # === END FILTER LOGIC ===
+
+        # Remove any elements in list with the value: None
         foundEmails = list(filter(None, foundEmails))
-        # == !Filter logic ==
 
         print(f"{PrintColors.BOLD}Filtered: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
-
-        print(f"\nSecondary filters filtered {PrintColors.BOLD}{numFiltered}{PrintColors.RESET} emails.\n")
-
         return inputRows, foundEmails
 
     with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
@@ -240,7 +247,7 @@ def createFilteredCSV(prefix=''):
         r1, r2 = csv.reader(f1), csv.reader(f2)
         while True:
             try:
-                nr1, nr2 = applyNameFilter(next(r1), next(r2))
+                nr1, nr2 = applySecondaryFilters(next(r1), next(r2))
                 writer.writerow(nr1+nr2)
             except StopIteration:
                 break
