@@ -26,7 +26,7 @@ DO_PRIMARY_EMAIL_CHECK = True
 # SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 
 # ==== SECONDARY FILTERS ====
-APPLY_NAME_FILTER = False
+APPLY_SECONDARY_FILTERS = True
 
 # ==== DEBUGGING ====
 SORT_OUTPUT = True
@@ -208,8 +208,6 @@ def createCombinedCSV(prefix=''):
 def createFilteredCSV(prefix=''):
     # SECONDARY FILTERS that apply to a new csv
 
-    numFiltered = 0
-
     def applySecondaryFilters(inputRows, foundEmails):
         # NOTES
         # This function takes in two lists of strings: "inputRows" and "foundEmails"
@@ -218,10 +216,12 @@ def createFilteredCSV(prefix=''):
         print(f"{PrintColors.BOLD}input:{PrintColors.RESET}  {inputRows}")
         print(f"{PrintColors.BOLD}emails: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
 
+        numBefore = len(foundEmails)
+
         # === START FILTER LOGIC ===
 
         def filterNoSharedChar(emails):
-            print(f"{PrintColors.BOLD}Use as filter:{PrintColors.RESET} {inputRows[0:2]}")
+            # print(f"{PrintColors.BOLD}Use as filter:{PrintColors.RESET} {inputRows[0:2]}")
             setInput = set(''.join(inputRows[0:2]))
             for index, email in enumerate(emails):
                 setEmail = set(email)
@@ -231,15 +231,31 @@ def createFilteredCSV(prefix=''):
             emails = list(filter(None, emails))
             return emails
 
+        def filterName(emails):
+            copy = []
+            firstName, lastName = [e.lower() for e in inputRows[0:2]]
+            for email in emails:
+                if firstName in email:
+                    copy.append(email)
+                elif lastName in email:
+                    copy.append(email)
+                elif firstName[0] in email and lastName[0] in email:
+                    copy.append(email)
+            return copy
+
         # Call filtering function
         foundEmails = filterNoSharedChar(foundEmails)
+        foundEmails = filterName(foundEmails)
 
         # === END FILTER LOGIC ===
+
+        numAfter = len(foundEmails)
 
         # Remove any elements in list with the value: None
         foundEmails = list(filter(None, foundEmails))
 
-        print(f"{PrintColors.BOLD}Filtered: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
+        print(f"{PrintColors.BOLD}Filtered Emails: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}\n")
+        print(f"Filtered out {PrintColors.RED}0{PrintColors.RESET} emails.") if numBefore - numAfter == 0 else print(f"Filtered out {PrintColors.BOLD}{numBefore - numAfter}{PrintColors.RESET} emails.")
         return inputRows, foundEmails
 
     with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
@@ -281,8 +297,9 @@ def main(argv):
     print("Starting Search...")
     os.mkdir(OUTPUT_PATH)
     numFoundEmails = runSearch()
-    print(f"Found {PrintColors.BOLD}{numFoundEmails}{PrintColors.RESET} emails.")
-    if APPLY_NAME_FILTER:
+    print(f"Found {PrintColors.BOLD}{numFoundEmails}{PrintColors.RESET} emails.\n")
+    print("Applying secondary filters...")
+    if APPLY_SECONDARY_FILTERS:
         createFilteredCSV(f"{numFoundEmails}-filtered_")
     if CREATE_COMBINED:
         createCombinedCSV(f"{numFoundEmails}_")
