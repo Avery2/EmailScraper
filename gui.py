@@ -54,6 +54,8 @@ options = [
     createInputLabel(parameters[0], 1),
     createInputLabel(parameters[1], 5),
     createInputLabel(parameters[2], 'input/TestCaseEmailScript.csv'),
+    [sg.Text('Input File'),
+     sg.InputText('input/TestCaseEmailScript.csv'), sg.FileBrowse()],
     createCheckboxLabel(parameters[3], True),
     createCheckboxLabel(parameters[4], False),
     createInputLabel(parameters[5], 0),
@@ -67,8 +69,7 @@ options = [
 
 # Define the window's contents
 layout = [
-    [sg.Frame("Parameters", layout=options)],
-    [sg.Text(size=(150, 10), key='-OUTPUT-')],
+    [sg.Column(layout=[[sg.Frame("Parameters", layout=options)]]), sg.Column(layout=[[sg.Text(size=(50, 10), key='-OUTPUT-')]])],
     [sg.Button('Run Search'), sg.Button('Quit')]]
 
 # Create the window
