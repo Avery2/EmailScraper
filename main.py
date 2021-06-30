@@ -51,20 +51,22 @@ AGENT_LIST = [
     'Mozilla/5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
 ]
 
+DISABLE_COLORS = True
+
 
 class PrintColors:
-    BLACK = "\u001b[30m"
-    RED = "\u001b[31m"
-    GREEN = "\u001b[32m"
-    YELLOW = "\u001b[33m"
-    BLUE = "\u001b[34m"
-    MAGENTA = "\u001b[35m"
-    CYAN = "\u001b[36m"
-    WHITE = "\u001b[37m"
-    RESET = "\u001b[0m"
-    BOLD = "\u001b[1m"
-    UNDERLINE = "\u001b[4m"
-    REVERSED = "\u001b[7m"
+    BLACK = "\u001b[30m" if not DISABLE_COLORS else ''
+    RED = "\u001b[31m" if not DISABLE_COLORS else ''
+    GREEN = "\u001b[32m" if not DISABLE_COLORS else ''
+    YELLOW = "\u001b[33m" if not DISABLE_COLORS else ''
+    BLUE = "\u001b[34m" if not DISABLE_COLORS else ''
+    MAGENTA = "\u001b[35m" if not DISABLE_COLORS else ''
+    CYAN = "\u001b[36m" if not DISABLE_COLORS else ''
+    WHITE = "\u001b[37m" if not DISABLE_COLORS else ''
+    RESET = "\u001b[0m" if not DISABLE_COLORS else ''
+    BOLD = "\u001b[1m" if not DISABLE_COLORS else ''
+    UNDERLINE = "\u001b[4m" if not DISABLE_COLORS else ''
+    REVERSED = "\u001b[7m" if not DISABLE_COLORS else ''
 
     def reset(self):
         print(self.RESET, end='')
@@ -303,7 +305,9 @@ def main(argv):
         createFilteredCSV(f"{numFoundEmails}-filtered_")
     if CREATE_COMBINED:
         createCombinedCSV(f"{numFoundEmails}_")
-    print(f"Output in {PrintColors.BOLD}./{OUTPUT_PATH}{PrintColors.RESET}")
+    outputMsg = f"Output in {PrintColors.BOLD}./{OUTPUT_PATH}{PrintColors.RESET}"
+    print(outputMsg)
+    return outputMsg
 
 
 if __name__ == "__main__":

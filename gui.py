@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import main
+from threading import Thread
 
 # ==== GENERAL ====
 startRow = 1
@@ -67,9 +68,15 @@ options = [
     createCheckboxLabel(parameters[11], False),
     createCheckboxLabel(parameters[12], True), ]
 
+# Output(size=(80, 20))
+
+col1 = [[sg.Frame("Parameters", layout=options)]]
+# col2 = [[sg.Text(size=(50, 10), key='-OUTPUT-')]]
+col2 = [[sg.Output(size=(80, 20))], [sg.Text(size=(50, 10), key='-OUTPUT-')]]
+
 # Define the window's contents
 layout = [
-    [sg.Column(layout=[[sg.Frame("Parameters", layout=options)]]), sg.Column(layout=[[sg.Text(size=(50, 10), key='-OUTPUT-')]])],
+    [sg.Column(layout=col1), sg.Column(layout=col2)],
     [sg.Button('Run Search'), sg.Button('Quit')]]
 
 # Create the window
@@ -86,6 +93,12 @@ while True:
     for param in parameters:
         allVals += param + ": " + str(values[f"-{param}-"])
         allVals += "\n"
+
+    thread = Thread(target=main.main, args=("main.py",))
+    thread.start()
+    # thread.join()
+
+    window.Refresh()
 
     # Output a message to the window
     window['-OUTPUT-'].update(allVals)
