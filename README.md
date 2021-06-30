@@ -120,6 +120,9 @@ foundEmails = filterTemplate(emails)
 
 `python gui.py`
 
+![image](https://user-images.githubusercontent.com/53503018/123910424-09c56d80-d940-11eb-92fa-617673a2914b.png)
+
+
 ## Link Dump
 
 [[Writing to file in python]](https://www.w3schools.com/python/python_file_write.asp)
