@@ -114,6 +114,12 @@ def filterTemplate(emails):
 foundEmails = filterTemplate(emails)
 ```
 
+## GUI (in progress)
+
+`python3 -m pip install PySimpleGUI`
+
+`python gui.py`
+
 ## Link Dump
 
 [[Writing to file in python]](https://www.w3schools.com/python/python_file_write.asp)
