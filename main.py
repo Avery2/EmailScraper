@@ -254,8 +254,8 @@ def createFilteredCSV(prefix=''):
         # Remove any elements in list with the value: None
         foundEmails = list(filter(None, foundEmails))
 
-        print(f"{PrintColors.BOLD}Filtered Emails: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}\n")
-        print(f"Filtered out {PrintColors.RED}0{PrintColors.RESET} emails.") if numBefore - numAfter == 0 else print(f"Filtered out {PrintColors.BOLD}{numBefore - numAfter}{PrintColors.RESET} emails.")
+        print(f"{PrintColors.BOLD}Filtered Emails: {len(foundEmails)}:{PrintColors.RESET} {foundEmails}")
+        print(f"Filtered out {PrintColors.RED}0{PrintColors.RESET} emails.") if numBefore - numAfter == 0 else print(f"Filtered out {PrintColors.BOLD}{numBefore - numAfter}{PrintColors.RESET} emails.\n")
         return inputRows, foundEmails
 
     with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
@@ -289,9 +289,9 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputFile = arg
-        elif opt in ("-s", "--ofile"):
+        elif opt in ("-s", "--startrow"):
             startRow = int(arg)
-        elif opt in ("-n", "--ofile"):
+        elif opt in ("-n", "--numsearch"):
             numSearch = int(arg)
 
     print("Starting Search...")
