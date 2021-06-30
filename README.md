@@ -81,6 +81,9 @@ SORT_OUTPUT = True  # Sorts the output in terminal of found emails which can be 
 SHOW_TXT = False    # Shows the raw text the search found
 ```
 
+<img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
+
+
 ## Other
 
 Code assumes the input file has this structure:
