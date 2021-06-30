@@ -72,7 +72,7 @@ options = [
 
 col1 = [[sg.Frame("Parameters", layout=options)]]
 # col2 = [[sg.Text(size=(50, 10), key='-OUTPUT-')]]
-col2 = [[sg.Output(size=(80, 20))], [sg.Text(size=(50, 10), key='-OUTPUT-')]]
+col2 = [[sg.Output(size=(80, 20))], createCheckboxLabel("Output here not terminal", True), [sg.Text(size=(50, 10), key='-OUTPUT-')]]
 
 # Define the window's contents
 layout = [
