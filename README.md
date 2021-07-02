@@ -10,6 +10,10 @@ Run these commands (not comprehensive because I forgot if there were more).
 
 `python -m pip install bs4`
 
+If you want to use GUI:
+
+`python3 -m pip install PySimpleGUI`
+
 ## Running
 
 ### How To Run
@@ -82,8 +86,6 @@ foundEmails = filterTemplate(emails)
 ```
 
 ## GUI (in progress)
-
-`python3 -m pip install PySimpleGUI`
 
 `python gui.py`
 
