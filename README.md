@@ -18,15 +18,13 @@ Run in terminal with: `python main.py` (or `python3 main.py`).
 You must use python version 3.6 or above. 
 I've only run it on Python 3.9.
 
-### Options
+### Command line options
 
 UPDATE: How the program is run has changed. It is now purely through the command line.
 
 ```
 main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearch=<value> --doGoogleSearch=<value> --delaySeconds=<value> --quoteEachWord=<value> --createCombined=<value> --disableColors=<value> --doPrimaryEmailCheck=<value> --applySecondaryFilters=<value> --sortOutput=<value> --showText=<value> --makeLowercase
 ```
-
-#### Command line options
 
 <img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
 
