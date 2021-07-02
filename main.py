@@ -9,8 +9,8 @@ import random
 import sys
 import getopt
 
-
-# ==== GENERAL ====
+# == DEFAULT VALUES ==
+# GENERAL
 startRow = 1
 numSearch = 5
 inputFile = 'input/TestCaseEmailScript.csv'
@@ -18,23 +18,24 @@ doBingSearch = True
 doGoogleSearch = False
 delaySeconds = 0
 
-# ==== OPTIONS ====
+# OPTIONS
 quoteEachWord = True
 createCombined = True
 disableColors = False
 
-# ==== PRIMARY FILTERS ====
+# PRIMARY FILTERS
 doPrimaryEmailCheck = True
 # SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 
-# ==== SECONDARY FILTERS ====
+# SECONDARY FILTERS
 applySecondaryFilters = True
 
-# ==== DEBUGGING ====
+# DEBUGGING
 sortOutput = True
 showText = False
 makeLowercase = True
 
+# == CLI OPTIONS ==
 globalOptionNames = ['startRow',
                      'numSearch',
                      'inputFile',
@@ -48,7 +49,8 @@ globalOptionNames = ['startRow',
                      'applySecondaryFilters',
                      'sortOutput',
                      'showText',
-                     'makeLowercase']
+                     'makeLowercase',
+                     'showURL']
 
 globalOptions = {globalOptionNames[0]: startRow,
                  globalOptionNames[1]: numSearch,
@@ -63,7 +65,8 @@ globalOptions = {globalOptionNames[0]: startRow,
                  globalOptionNames[10]: applySecondaryFilters,
                  globalOptionNames[11]: sortOutput,
                  globalOptionNames[12]: showText,
-                 globalOptionNames[13]: makeLowercase}
+                 globalOptionNames[13]: makeLowercase,
+                 globalOptionNames[14]: True}
 
 # ==== INITIALIZE VALUES ====
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
@@ -118,12 +121,15 @@ def runSearch():
                 'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
             }
             url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
+            if globalOptions['showURL']:
+                print(f"{PrintColors.BLUE}{url}{PrintColors.RESET}")
             request_result = requests.get(url, headers=headers)
             soup = bs4.BeautifulSoup(request_result.text,
                                      "html.parser")
             txt = soup.get_text()
             if globalOptions['showText']:
                 print(txt)
+                print(soup.find_all('p'))
             return txt
 
         def filterFoundTerms(foundTerms):
