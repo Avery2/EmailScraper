@@ -87,6 +87,8 @@ foundEmails = filterTemplate(emails)
 
 ## GUI (in progress)
 
+To run:
+
 `python gui.py`
 
 ![image](https://user-images.githubusercontent.com/53503018/123910424-09c56d80-d940-11eb-92fa-617673a2914b.png)
