@@ -47,6 +47,8 @@ main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearc
 | showText              | (bool) Shows the raw text the search found                                                 | False                         |
 | makeLowercase         | (bool) Makes the emails lowercase (and therefore not case sensitive)                       | True                          |
 
+Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.csv`
+
 <img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
 
 ## Other
