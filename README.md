@@ -20,66 +20,13 @@ I've only run it on Python 3.9.
 
 ### Options
 
-To configure your search, you can edit parameters at top of `main.py` and/or use the command line options below.
+UPDATE: How the program is run has changed. It is now purely through the command line.
+
+```
+main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearch=<value> --doGoogleSearch=<value> --delaySeconds=<value> --quoteEachWord=<value> --createCombined=<value> --disableColors=<value> --doPrimaryEmailCheck=<value> --applySecondaryFilters=<value> --sortOutput=<value> --showText=<value> --makeLowercase
+```
 
 #### Command line options
-
-`main.py -i <inputfilepath> -s <startrow> -n <numsearch>`
-
-- `-i <inputfilepath>`: specify input file
-- `-s <startrow>`: specify row to start
-- `-n <numsearch>`: specify number of searches to do (`0` to process entire input file)
-
-Example starting from row `10` and doing `5` searches:
-
-`python main.py -s 10 -n 5`
-
-Example starting from row `1` (the header counts as row 0) and doing searches for the entire input file:
-
-`python main.py -s 1 -n 0`
-
-#### Inline options
-
-
-These are default values overridden by command line arguments
-```
-startRow = 1   # What row to start from. Default 1 because row 0 is the header
-numSearch = 5  # The number of google searches it will do, if 0, will go forever
-inputFile = 'input/TestCaseEmailScript.csv' # path to the input csv file
-```
-
-Select what searches to do (Google will mark as bot so set to False by default)
-```
-DO_BING_SEARCH = True
-DO_GOOGLE_SEARCH = False
-```
-
-Delay (Default 0 since bing has no bot detection)
-```
-DELAY_SECONDS = 0
-```
-
-Other options
-```
-QUOTE_EACH_WORD = True    # Option to do multiple searches with a different word in quotes each time. If set to False quotes none.
-CREATE_COMBINED = True    # Creates a seperate "combined" csv that appends the found emails to the original csv
-```
-
-Primary filters. Primary filters are applied to every email.
-```
-DO_PRIMARY_EMAIL_CHECK = True # Filters emails using the validate_email package
-```
-
-Secondary filters. Seconary filters are only applied to create a seperate "filtered" csv. This is because these filters might be too strong and remove all/most emails.
-```
-APPLY_SECONDARY_FILTERS = True # Does secondary filtering based on custom functions
-```
-
-Debugging
-```
-SORT_OUTPUT = True  # Sorts the output in terminal of found emails which can be helpful to see patterns
-SHOW_TXT = False    # Shows the raw text the search found
-```
 
 <img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
 
