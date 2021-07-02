@@ -9,29 +9,61 @@ import random
 import sys
 import getopt
 
+
 # ==== GENERAL ====
 startRow = 1
 numSearch = 5
 inputFile = 'input/TestCaseEmailScript.csv'
-DO_BING_SEARCH = True
-DO_GOOGLE_SEARCH = False
-DELAY_SECONDS = 0
+doBingSearch = True
+doGoogleSearch = False
+delaySeconds = 0
 
 # ==== OPTIONS ====
-QUOTE_EACH_WORD = True
-CREATE_COMBINED = True
+quoteEachWord = True
+createCombined = True
+disableColors = False
 
 # ==== PRIMARY FILTERS ====
-DO_PRIMARY_EMAIL_CHECK = True
+doPrimaryEmailCheck = True
 # SLOW_EMAIL_CHECK = False  # this doesn't actually work rn
 
 # ==== SECONDARY FILTERS ====
-APPLY_SECONDARY_FILTERS = True
+applySecondaryFilters = True
 
 # ==== DEBUGGING ====
-SORT_OUTPUT = True
-SHOW_TXT = False
-MAKE_LOWERCASE = True
+sortOutput = True
+showText = False
+makeLowercase = True
+
+globalOptionNames = ['startRow',
+                     'numSearch',
+                     'inputFile',
+                     'doBingSearch',
+                     'doGoogleSearch',
+                     'delaySeconds',
+                     'quoteEachWord',
+                     'createCombined',
+                     'disableColors',
+                     'doPrimaryEmailCheck',
+                     'applySecondaryFilters',
+                     'sortOutput',
+                     'showText',
+                     'makeLowercase']
+
+globalOptions = {globalOptionNames[0]: startRow,
+                 globalOptionNames[1]: numSearch,
+                 globalOptionNames[2]: inputFile,
+                 globalOptionNames[3]: doBingSearch,
+                 globalOptionNames[4]: doGoogleSearch,
+                 globalOptionNames[5]: delaySeconds,
+                 globalOptionNames[6]: quoteEachWord,
+                 globalOptionNames[7]: createCombined,
+                 globalOptionNames[8]: disableColors,
+                 globalOptionNames[9]: doPrimaryEmailCheck,
+                 globalOptionNames[10]: applySecondaryFilters,
+                 globalOptionNames[11]: sortOutput,
+                 globalOptionNames[12]: showText,
+                 globalOptionNames[13]: makeLowercase}
 
 # ==== INITIALIZE VALUES ====
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
@@ -51,22 +83,21 @@ AGENT_LIST = [
     'Mozilla/5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
 ]
 
-DISABLE_COLORS = True
-
 
 class PrintColors:
-    BLACK = "\u001b[30m" if not DISABLE_COLORS else ''
-    RED = "\u001b[31m" if not DISABLE_COLORS else ''
-    GREEN = "\u001b[32m" if not DISABLE_COLORS else ''
-    YELLOW = "\u001b[33m" if not DISABLE_COLORS else ''
-    BLUE = "\u001b[34m" if not DISABLE_COLORS else ''
-    MAGENTA = "\u001b[35m" if not DISABLE_COLORS else ''
-    CYAN = "\u001b[36m" if not DISABLE_COLORS else ''
-    WHITE = "\u001b[37m" if not DISABLE_COLORS else ''
-    RESET = "\u001b[0m" if not DISABLE_COLORS else ''
-    BOLD = "\u001b[1m" if not DISABLE_COLORS else ''
-    UNDERLINE = "\u001b[4m" if not DISABLE_COLORS else ''
-    REVERSED = "\u001b[7m" if not DISABLE_COLORS else ''
+    global globalOptions
+    BLACK = "\u001b[30m" if not globalOptions['disableColors'] else ''
+    RED = "\u001b[31m" if not globalOptions['disableColors'] else ''
+    GREEN = "\u001b[32m" if not globalOptions['disableColors'] else ''
+    YELLOW = "\u001b[33m" if not globalOptions['disableColors'] else ''
+    BLUE = "\u001b[34m" if not globalOptions['disableColors'] else ''
+    MAGENTA = "\u001b[35m" if not globalOptions['disableColors'] else ''
+    CYAN = "\u001b[36m" if not globalOptions['disableColors'] else ''
+    WHITE = "\u001b[37m" if not globalOptions['disableColors'] else ''
+    RESET = "\u001b[0m" if not globalOptions['disableColors'] else ''
+    BOLD = "\u001b[1m" if not globalOptions['disableColors'] else ''
+    UNDERLINE = "\u001b[4m" if not globalOptions['disableColors'] else ''
+    REVERSED = "\u001b[7m" if not globalOptions['disableColors'] else ''
 
     def reset(self):
         print(self.RESET, end='')
@@ -78,61 +109,61 @@ class PrintColors:
         print(self.GREEN, end='')
 
 
-def findemail(terms=["default text"]):
-    def getQueryText(text="default text", queryurl=BING_QUERY_URL):
-        headers = {
-            'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
-        }
-        url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
-        request_result = requests.get(url, headers=headers)
-        soup = bs4.BeautifulSoup(request_result.text,
-                                 "html.parser")
-        txt = soup.get_text()
-        if SHOW_TXT:
-            print(txt)
-        return txt
-
-    def filterFoundTerms(foundTerms):
-        foundTermsFiltered = []
-        if MAKE_LOWERCASE:
-            foundTerms = [e.lower() for e in foundTerms]  # to lowercase
-        foundTerms = list(set(foundTerms))
-        if SORT_OUTPUT:
-            foundTerms.sort()
-        # Secondary checks
-        for mail in foundTerms:
-            checks = []
-            # PRIMARY FILTERS HERE
-            # if False:
-            #     checks.append(False)
-            if DO_PRIMARY_EMAIL_CHECK:
-                checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
-
-            passAllChecks = all(checks)
-            if passAllChecks:
-                foundTermsFiltered.append(mail)
-            print(f"{PrintColors.GREEN}{passAllChecks}{PrintColors.RESET}  : {mail}") if passAllChecks else print(f"{PrintColors.RED}{passAllChecks}{PrintColors.RESET} : {mail}")
-
-        if foundTermsFiltered == []:
-            print(f"{PrintColors.RED}Warning: No valid emails found.{PrintColors.RESET}")
-
-        return foundTermsFiltered
-
-    txt = ''
-    for term in terms:
-        if DO_BING_SEARCH:
-            txt += getQueryText(term, BING_QUERY_URL)
-        if DO_GOOGLE_SEARCH:
-            txt += getQueryText(term, GOOGLE_QUERY_URL)
-    if len(re.findall(GOOGLE_BOT_MESSAGE, txt)) > 0:
-        print(f"\n{PrintColors.RED}WARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.{PrintColors.RESET}\n")
-
-    myRegularExpression = r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
-    foundTerms = re.findall(myRegularExpression, txt)
-    return filterFoundTerms(foundTerms)
-
-
 def runSearch():
+    global globalOptions
+
+    def doSearch(terms=["default text"]):
+        def getQueryText(text="default text", queryurl=BING_QUERY_URL):
+            headers = {
+                'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
+            }
+            url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
+            request_result = requests.get(url, headers=headers)
+            soup = bs4.BeautifulSoup(request_result.text,
+                                     "html.parser")
+            txt = soup.get_text()
+            if globalOptions['showText']:
+                print(txt)
+            return txt
+
+        def filterFoundTerms(foundTerms):
+            foundTermsFiltered = []
+            if globalOptions['makeLowercase']:
+                foundTerms = [e.lower() for e in foundTerms]  # to lowercase
+            foundTerms = list(set(foundTerms))
+            if globalOptions['sortOutput']:
+                foundTerms.sort()
+            for mail in foundTerms:
+                checks = []
+                # PRIMARY FILTERS HERE
+                # if False:
+                #     checks.append(False)
+                if globalOptions['doPrimaryEmailCheck']:
+                    checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
+
+                passAllChecks = all(checks)
+                if passAllChecks:
+                    foundTermsFiltered.append(mail)
+                print(f"{PrintColors.GREEN}{passAllChecks}{PrintColors.RESET}  : {mail}") if passAllChecks else print(f"{PrintColors.RED}{passAllChecks}{PrintColors.RESET} : {mail}")
+
+            if foundTermsFiltered == []:
+                print(f"{PrintColors.RED}Warning: No valid emails found.{PrintColors.RESET}")
+
+            return foundTermsFiltered
+
+        txt = ''
+        for term in terms:
+            if globalOptions['doBingSearch']:
+                txt += getQueryText(term, BING_QUERY_URL)
+            if globalOptions['doGoogleSearch']:
+                txt += getQueryText(term, GOOGLE_QUERY_URL)
+        if len(re.findall(GOOGLE_BOT_MESSAGE, txt)) > 0:
+            print(f"\n{PrintColors.RED}WARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.{PrintColors.RESET}\n")
+
+        myRegularExpression = r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
+        foundTerms = re.findall(myRegularExpression, txt)
+        return filterFoundTerms(foundTerms)
+
     def rowToQueries(row):
         queries = []
 
@@ -143,11 +174,11 @@ def runSearch():
         queries.append(query.strip())
 
         # quotes each word
-        if QUOTE_EACH_WORD:
+        if globalOptions['quoteEachWord']:
             for i, foo in enumerate(row):
                 query = ''
                 for j, elem in enumerate(row):
-                    if QUOTE_EACH_WORD and i == j:
+                    if globalOptions['quoteEachWord'] and i == j:
                         # query += " \"" + elem + "\""
                         query += f" \"{elem}\""
                     else:
@@ -161,7 +192,7 @@ def runSearch():
     numFoundEmails = 0
 
     # csv output: do search and write to a csv
-    with open(inputFile, newline='') as csvfile:
+    with open(globalOptions['inputFile'], newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',')
         # iterate through rows of CSV
         for rowIndex, row in enumerate(spamreader):
@@ -170,7 +201,7 @@ def runSearch():
                 continue
             if ' '.join(row).replace(',', ' ').strip() == '':  # empty row check
                 continue
-            time.sleep(DELAY_SECONDS)
+            time.sleep(globalOptions['delaySeconds'])
 
             for i, elem in enumerate(row):
                 row[i] = elem.replace(',', ' ').strip()
@@ -179,7 +210,7 @@ def runSearch():
 
             queryTerms = rowToQueries(row)
             print(f"{PrintColors.BOLD}{queryNum}{PrintColors.RESET} " + f"\n{PrintColors.BOLD}query list:{PrintColors.RESET} {row}\n{PrintColors.BOLD}search query(s):{PrintColors.RESET} {queryTerms}")
-            validEmails = findemail(queryTerms)
+            validEmails = doSearch(queryTerms)
             print(f"{PrintColors.BOLD}valid emails:{PrintColors.RESET} {len(validEmails)}\n" + "\n")
             numFoundEmails += len(validEmails)
             f.write(f"{', '.join(validEmails)}\n")
@@ -194,7 +225,7 @@ def runSearch():
 
 def createCombinedCSV(prefix=''):
     # csv output: write a new combined csv
-    with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
+    with open(globalOptions['inputFile'], 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
         writer = csv.writer(w)
         r1, r2 = csv.reader(f1), csv.reader(f2)
         while True:
@@ -260,7 +291,7 @@ def createFilteredCSV(prefix=''):
         print(f"Filtered out {PrintColors.RED}0{PrintColors.RESET} emails.") if numBefore - numAfter == 0 else print(f"Filtered out {PrintColors.BOLD}{numBefore - numAfter}{PrintColors.RESET} emails.\n")
         return inputRows, foundEmails
 
-    with open(inputFile, 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
+    with open(globalOptions['inputFile'], 'r') as f1, open(OUTPUT_PATH+QUERY_FILENAME, 'r') as f2, open(OUTPUT_PATH+prefix+COMBINED_FILENAME, 'w') as w:
         writer = csv.writer(w)
         r1, r2 = csv.reader(f1), csv.reader(f2)
         while True:
@@ -275,35 +306,36 @@ def createFilteredCSV(prefix=''):
 
 
 def main(argv):
-
-    global inputFile
-    global startRow
-    global numSearch
+    global globalOptions
+    longOpts = [f'{e}=' for e in globalOptionNames].copy()
+    longOpts.append('help')
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:s:n:", ["ifile=", "ofile="])
+        opts, args = getopt.getopt(argv, shortopts='h', longopts=longOpts)
     except getopt.GetoptError:
-        print('main.py -i <inputfilepath> -s <startrow> -n <numsearch>')
+        print(f"{PrintColors.RED}Invalid options.{PrintColors.RESET} Usage:")
+        print('main.py ' + '=<value> '.join([f'--{e}' for e in globalOptionNames]))
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h':
-            print('main.py -i <inputfilepath> -s <startrow> -n <numsearch>')
+        if opt in ('-h', '--help'):
+            print('main.py ' + '=<value> '.join([f'--{e}' for e in globalOptionNames]))
             sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputFile = arg
-        elif opt in ("-s", "--startrow"):
-            startRow = int(arg)
-        elif opt in ("-n", "--numsearch"):
-            numSearch = int(arg)
+        elif opt in [f'--{e}' for e in globalOptionNames]:
+            try:
+                globalOptions[opt[2:]] = int(arg)
+            except ValueError:
+                globalOptions[opt[2:]] = arg
+
+    print(globalOptions)
 
     print("Starting Search...")
     os.mkdir(OUTPUT_PATH)
     numFoundEmails = runSearch()
     print(f"Found {PrintColors.BOLD}{numFoundEmails}{PrintColors.RESET} emails.\n")
     print("Applying secondary filters...")
-    if APPLY_SECONDARY_FILTERS:
+    if globalOptions['applySecondaryFilters']:
         createFilteredCSV(f"{numFoundEmails}-filtered_")
-    if CREATE_COMBINED:
+    if globalOptions['createCombined']:
         createCombinedCSV(f"{numFoundEmails}_")
     outputMsg = f"Output in {PrintColors.BOLD}./{OUTPUT_PATH}{PrintColors.RESET}"
     print(outputMsg)
