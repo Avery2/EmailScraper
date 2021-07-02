@@ -14,8 +14,8 @@ Run these commands (not comprehensive because I forgot if there were more).
 
 ### How To Run
 
-Run in terminal with: `python main.py` (or `python3 main.py`). 
-You must use python version 3.6 or above. 
+Run in terminal with: `python main.py` (or `python3 main.py`).
+You must use python version 3.6 or above.
 I've only run it on Python 3.9.
 
 ### Command line options
@@ -26,8 +26,24 @@ UPDATE: How the program is run has changed. It is now purely through the command
 main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearch=<value> --doGoogleSearch=<value> --delaySeconds=<value> --quoteEachWord=<value> --createCombined=<value> --disableColors=<value> --doPrimaryEmailCheck=<value> --applySecondaryFilters=<value> --sortOutput=<value> --showText=<value> --makeLowercase
 ```
 
-<img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
+| Option                | Description                                                                                | Default Value                 |
+| --------------------- | ------------------------------------------------------------------------------------------ | ----------------------------- |
+| startRow              | (int) Row to start on                                                                      | 1                             |
+| numSearch             | (int) Number of searches to do (0 to process entire input file)                            | 5                             |
+| inputFile             | (str) Path to input file                                                                   | input/TestCaseEmailScript.csv |
+| doBingSearch          | (bool) Do Bing search                                                                      | True                          |
+| doGoogleSearch        | (bool) Do Google search                                                                    | False                         |
+| delaySeconds          | (int) Delay beteween searches (to avoid bots)                                              | 0                             |
+| quoteEachWord         | (bool) Do multiple searches with a different word in quotes each time. If False quote none | True                          |
+| createCombined        | (bool) Creates a seperate "combined" csv that appends the found emails to the original csv | True                          |
+| disableColors         | (bool) Disables termial output coloring                                                    | False                         |
+| doPrimaryEmailCheck   | (bool) Filters emails using the validate_email package                                     | True                          |
+| applySecondaryFilters | (bool) Does secondary filtering based on custom functions                                  | True                          |
+| sortOutput            | (bool) Sorts the output in terminal of found emails which can be helpful to see patterns   | True                          |
+| showText              | (bool) Shows the raw text the search found                                                 | False                         |
+| makeLowercase         | (bool) Makes the emails lowercase (and therefore not case sensitive)                       | True                          |
 
+<img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
 
 ## Other
 
@@ -43,6 +59,7 @@ Code assumes the input file has this structure:
 ```
 
 Example filter function that just removes the first email if it exists. This function would go in the `FILTER LOGIC` section of the `applySecondaryFilters` function in case you want to apply your own filter. To do this just make your own function in a similar form that takes in the `foundEmails` list, mutates it by removing whatever you wany, and returns it. Then call your function and set the `foundEmails`
+
 ```
 def filterExample(emails):
     # Set first email to None if it exists
@@ -54,7 +71,9 @@ def filterExample(emails):
 # Call Function
 foundEmails = filterExample(foundEmails)
 ```
+
 Template that does nothing.
+
 ```
 def filterTemplate(emails):
     return emails
@@ -69,7 +88,6 @@ foundEmails = filterTemplate(emails)
 `python gui.py`
 
 ![image](https://user-images.githubusercontent.com/53503018/123910424-09c56d80-d940-11eb-92fa-617673a2914b.png)
-
 
 ## Link Dump
 

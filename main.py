@@ -321,10 +321,15 @@ def main(argv):
             print('main.py ' + '=<value> '.join([f'--{e}' for e in globalOptionNames]))
             sys.exit()
         elif opt in [f'--{e}' for e in globalOptionNames]:
-            try:
-                globalOptions[opt[2:]] = int(arg)
-            except ValueError:
-                globalOptions[opt[2:]] = arg
+            if arg.lower() in ['t', 'true']:
+                globalOptions[opt[2:]] = True
+            elif arg.lower() in ['f', 'false']:
+                globalOptions[opt[2:]] = False
+            else:
+                try:
+                    globalOptions[opt[2:]] = int(arg)
+                except ValueError:
+                    globalOptions[opt[2:]] = arg
 
     print(globalOptions)
 
