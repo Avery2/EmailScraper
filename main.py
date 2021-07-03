@@ -78,6 +78,7 @@ class EmailBot:
         if globals.options['createCombined']:
             EmailBot.createCombinedCSV(f"{numFoundEmails}_")
         outputMsg = f"Output in {PrintColors.bold}./{EmailBot.outputPath}{PrintColors.reset}"
+        globals.output["outputPath"] = EmailBot.outputPath
         print(outputMsg)
         print("="*10 + '\n')
         return outputMsg

@@ -1,3 +1,4 @@
+import subprocess
 import globals
 
 globals.initialize()
@@ -10,3 +11,6 @@ for o in globals.options:
         print("INT")
     elif isinstance(globals.options[o], str):
         print("STR")
+
+file_to_show = "."
+subprocess.call(["open", "-R", file_to_show])

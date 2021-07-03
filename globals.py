@@ -40,3 +40,6 @@ def initialize():
                optionNames[12]: False,  # showText
                optionNames[13]: True,  # makeLowercase
                optionNames[14]: True}  # showURL
+
+    global output
+    output = {"outputPath": None}

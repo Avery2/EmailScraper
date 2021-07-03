@@ -2,6 +2,8 @@ import PySimpleGUI as sg
 import main
 from threading import Thread
 import globals
+import subprocess
+import os
 
 globals.initialize()
 
@@ -61,8 +63,9 @@ for o in globals.options:
     elif isinstance(globals.options[o], str):
         options.append(createInputLabel(o, globals.options[o]))
 
-col1 = [[sg.Frame("Parameters", layout=options)],
-        [sg.Text(size=(60, 10), font="Monaco", key='_output_')], ]
+col1 = [[sg.Frame("Options", layout=options)],
+        [sg.Frame("Parameters", layout=[[sg.Text(size=(64, 15), font="Monaco", key='_output_')]])],
+        [sg.Frame("Output", layout=[[sg.Button('Open Output Folder', key="_open_", disabled_button_color="grey", disabled=True), sg.Text(size=(50, 1), font="Monaco", key='_outputfile_')]])]]
 col2 = [[sg.Output(size=(100, 45), font="Monaco", echo_stdout_stderr=True, key="_term_")]]
 layout = [
     [sg.Column(layout=col1), sg.Column(layout=col2)],
@@ -78,7 +81,11 @@ def wrapped_worker(param):
 
 
 def on_done():
+    global lastOutput
     window.FindElement("_run_").Update(disabled=False)
+    window.FindElement("_open_").Update(disabled=False)
+    window['_outputfile_'].update(globals.output["outputPath"])
+    window.Refresh()
 
 
 while True:
@@ -100,8 +107,13 @@ while True:
     if event == "_run_":
         wrapped_worker(param)
         window.FindElement("_run_").Update(disabled=True)
+        window.FindElement("_open_").Update(disabled=True)
+
+    if event == "_open_":
+        subprocess.call(["open", "-R", globals.output["outputPath"]])
 
     window['_output_'].update(outputText)
     window.Refresh()
 
 window.close()
+os._exit(1)
