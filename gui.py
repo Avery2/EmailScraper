@@ -63,9 +63,15 @@ for o in globals.options:
     elif isinstance(globals.options[o], str):
         options.append(createInputLabel(o, globals.options[o]))
 
+initialText = ''
+for p in globals.optionNames:
+    initialText += f"{p.ljust(25)}None\n"
+
 col1 = [[sg.Frame("Options", layout=options)],
-        [sg.Frame("Parameters", layout=[[sg.Text(size=(64, 15), font="Monaco", key='_output_')]])],
-        [sg.Frame("Output", layout=[[sg.Button('Open Output Folder', key="_open_", disabled_button_color="grey", disabled=True), sg.Text(size=(50, 1), font="Monaco", key='_outputfile_')]])]]
+        [sg.Frame("Parameters", layout=[[sg.Text(text=initialText, size=(64, 15), font="Monaco", key='_output_')]])],
+        [sg.Frame("Output", layout=[[sg.Button('Open Output Folder', key="_open_",
+                                               disabled_button_color="grey", disabled=True),
+                                     sg.Text(size=(50, 1), font="Monaco", key='_outputfile_')]])]]
 col2 = [[sg.Output(size=(100, 45), font="Monaco", echo_stdout_stderr=True, key="_term_")]]
 layout = [
     [sg.Column(layout=col1), sg.Column(layout=col2)],
@@ -90,6 +96,7 @@ def on_done():
 
 while True:
     event, values = window.read()
+    print(f"{event}, {values}")
     if event == sg.WINDOW_CLOSED or event == "_quit_":
         break
 
@@ -97,7 +104,7 @@ while True:
     outputText = ''
     for p in globals.optionNames:
         val = values[f"_{p}_"]
-        outputText += f"{p.ljust(20)}{str(val)}\n"
+        outputText += f"{p.ljust(25)}{str(val)}\n"
         param.append(f"--{p}")
         param.append(f"{val}")
 
