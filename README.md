@@ -50,7 +50,7 @@ main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearc
 
 Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.csv`
 
-<img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
+<img width="1552" alt="Screen Shot 2021-07-03 at 10 34 48 AM" src="https://user-images.githubusercontent.com/53503018/124359417-6cda2d00-dbea-11eb-888e-c8412128c765.png">
 
 ## Other
 
@@ -88,13 +88,14 @@ def filterTemplate(emails):
 foundEmails = filterTemplate(emails)
 ```
 
-## GUI (in progress)
+## GUI (now working!)
 
 To run:
 
 `python gui.py`
 
-![image](https://user-images.githubusercontent.com/53503018/123910424-09c56d80-d940-11eb-92fa-617673a2914b.png)
+<img width="1322" alt="Screen Shot 2021-07-03 at 10 35 08 AM" src="https://user-images.githubusercontent.com/53503018/124359420-7368a480-dbea-11eb-9679-40bc46282881.png">
+
 
 ## Link Dump
 
