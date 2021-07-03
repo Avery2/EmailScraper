@@ -15,7 +15,16 @@ class BaseThread(Thread):
         self.callback_args = callback_args
 
     def target_with_callback(self, args):
-        self.method(args)
+        try:
+            self.method(args)
+        except Exception as e:
+            print(f"{e}\n{'='*10}\n")
+            if self.callback is not None:
+                if self.callback_args is not None:
+                    self.callback(*self.callback_args)
+                else:
+                    self.callback()
+            exit()
         if self.callback is not None:
             if self.callback_args is not None:
                 self.callback(*self.callback_args)

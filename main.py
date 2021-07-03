@@ -67,7 +67,7 @@ class EmailBot:
         EmailBot.combinedFilename = f"combined-emails-{EmailBot.startTime}.csv"
 
     def run():
-        print("="*10)
+        print('\n' + "="*10)
         print("Starting Search...")
         os.mkdir(EmailBot.outputPath)
         numFoundEmails = EmailBot.runSearch()
@@ -79,7 +79,7 @@ class EmailBot:
             EmailBot.createCombinedCSV(f"{numFoundEmails}_")
         outputMsg = f"Output in {PrintColors.bold}./{EmailBot.outputPath}{PrintColors.reset}"
         print(outputMsg)
-        print("="*10)
+        print("="*10 + '\n')
         return outputMsg
 
     def runSearch():
