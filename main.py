@@ -171,6 +171,11 @@ class EmailBot:
             spamreader = csv.reader(csvfile, delimiter=',')
             # iterate through rows of CSV
             for rowIndex, row in enumerate(spamreader):
+                if globals.terminate_early:
+                    csvfile.close()
+                    f.close()
+                    globals.terminate_early = False
+                    exit()
                 if rowIndex < globals.options['startRow']:
                     f.write(f"\n")
                     continue

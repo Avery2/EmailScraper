@@ -1,6 +1,9 @@
 global initialized
 initialized = False
 
+global terminate_early
+terminate_early = False
+
 
 def initialize():
     global initialized

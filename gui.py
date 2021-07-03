@@ -83,6 +83,7 @@ layout = [
     [sg.Column(layout=col1), sg.Column(layout=col2)],
     [sg.Button('Run Search', key="_run_", disabled_button_color="grey"),
      sg.Button('Clear Output', key="_clear_"),
+     sg.Button('End Search', key="_terminate_", disabled_button_color="grey", disabled=True),
      sg.Button('Quit', key="_quit_")]]
 window = sg.Window('Window Title', layout)
 
@@ -102,9 +103,6 @@ def on_done():
 
 while True:
     event, values = window.read()
-    print(f"{event}, {values}")
-    if event == sg.WINDOW_CLOSED or event == "_quit_":
-        break
 
     param = []
     outputText = ''
@@ -114,15 +112,21 @@ while True:
         param.append(f"--{p}")
         param.append(f"{val}")
 
-    if event == "_clear_":
+    if event == sg.WINDOW_CLOSED or event == "_quit_":
+        break
+    elif event == '_terminate_':
+        globals.terminate_early = True
+        window.FindElement("_terminate_").Update(disabled=True)
+        print("\nEnding search. Finishing row...\n")
+        on_done()
+    elif event == "_clear_":
         window.FindElement('_term_').Update('')
-
-    if event == "_run_":
+    elif event == "_run_":
         wrapped_worker(param)
         window.FindElement("_run_").Update(disabled=True)
         window.FindElement("_open_").Update(disabled=True)
-
-    if event == "_open_":
+        window.FindElement("_terminate_").Update(disabled=False)
+    elif event == "_open_":
         subprocess.call(["open", "-R", globals.output["outputPath"]])
 
     window['_output_'].update(outputText)
