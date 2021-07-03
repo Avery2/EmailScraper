@@ -94,10 +94,15 @@ def wrapped_worker(param):
 
 
 def on_done():
-    global lastOutput
     window.FindElement("_run_").Update(disabled=False)
     window.FindElement("_open_").Update(disabled=False)
+    window.FindElement("_terminate_").Update(disabled=True)
     window['_outputfile_'].update(globals.output["outputPath"])
+    window.Refresh()
+
+
+def on_done_terminated():
+    window.FindElement("_run_").Update(disabled=False)
     window.Refresh()
 
 
@@ -117,8 +122,8 @@ while True:
     elif event == '_terminate_':
         globals.terminate_early = True
         window.FindElement("_terminate_").Update(disabled=True)
-        print("\nEnding search. Finishing row...\n")
-        on_done()
+        print(f"\n\n{'!'*15}\nEnding search. Please wait for \"Search Ended\" before starting new search.\n{'!'*15}\n")
+        on_done_terminated()
     elif event == "_clear_":
         window.FindElement('_term_').Update('')
     elif event == "_run_":

@@ -175,6 +175,7 @@ class EmailBot:
                     csvfile.close()
                     f.close()
                     globals.terminate_early = False
+                    print(f"\n{'!'*15}\nSearch Ended. You can safely start a new one now.\n{'!'*15}\n")
                     exit()
                 if rowIndex < globals.options['startRow']:
                     f.write(f"\n")
