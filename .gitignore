@@ -2,3 +2,5 @@
 *.csv
 .DS_Store
 *.xls
+*.pyc
+__pycache__/
