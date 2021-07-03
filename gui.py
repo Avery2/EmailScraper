@@ -6,6 +6,23 @@ import globals
 globals.initialize()
 
 
+class BaseThread(Thread):
+    def __init__(self, callback=None, callback_args=None, *args, **kwargs):
+        target = kwargs.pop('target')
+        super(BaseThread, self).__init__(target=self.target_with_callback, *args, **kwargs)
+        self.callback = callback
+        self.method = target
+        self.callback_args = callback_args
+
+    def target_with_callback(self, args):
+        self.method(args)
+        if self.callback is not None:
+            if self.callback_args is not None:
+                self.callback(*self.callback_args)
+            else:
+                self.callback()
+
+
 def createInputLabel(str='ERROR', default_text=""):
     a = sg.Text(str)
     b = sg.Input(key=f"_{str}_", default_text=default_text)
@@ -36,17 +53,12 @@ window = sg.Window('Window Title', layout)
 
 
 def wrapped_worker(param):
-    worker(param)
-    on_done()
+    thread = BaseThread(target=main.main, args=(param,), callback=on_done)
+    thread.start()
 
 
 def on_done():
     window.FindElement("_run_").Update(disabled=False)
-
-
-def worker(param):
-    thread = Thread(target=main.main, args=(param,))
-    thread.start()
 
 
 while True:
@@ -72,7 +84,7 @@ while True:
 
     if event == "_run_":
         wrapped_worker(param)
-        # window.FindElement("_run_").Update(disabled=True)
+        window.FindElement("_run_").Update(disabled=True)
 
     window['_output_'].update(allVals)
     window.Refresh()
