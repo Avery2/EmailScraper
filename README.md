@@ -16,15 +16,28 @@ If you want to use GUI:
 
 ## Running
 
-### How To Run
+You have two options. Run with the gui or run with terminal. Below are more detailed instructions.
 
-Run in terminal with: `python main.py` (or `python3 main.py`).
+1. GUI:      `python gui.py`
+2. TERMINAL: `python main.py`
+
+
 You must use python version 3.6 or above.
 I've only run it on Python 3.9.
+
+### GUI (now working!)
+
+To run:
+
+`python gui.py`
+
+<img width="1322" alt="Screen Shot 2021-07-03 at 10 35 08 AM" src="https://user-images.githubusercontent.com/53503018/124359420-7368a480-dbea-11eb-9679-40bc46282881.png">
 
 ### Command line options
 
 UPDATE: How the program is run has changed. It is now purely through the command line.
+
+Run in terminal with: `python main.py` (or `python3 main.py`). Below are description of the optional flags.
 
 ```
 main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearch=<value> --doGoogleSearch=<value> --delaySeconds=<value> --quoteEachWord=<value> --createCombined=<value> --disableColors=<value> --doPrimaryEmailCheck=<value> --applySecondaryFilters=<value> --sortOutput=<value> --showText=<value> --makeLowercase
@@ -50,7 +63,7 @@ main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearc
 
 Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.csv`
 
-<img width="1552" alt="Screen Shot 2021-06-25 at 4 19 44 PM" src="https://user-images.githubusercontent.com/53503018/123910568-41ccb080-d940-11eb-9c36-eca814f48026.png">
+<img width="1552" alt="Screen Shot 2021-07-03 at 10 34 48 AM" src="https://user-images.githubusercontent.com/53503018/124359417-6cda2d00-dbea-11eb-888e-c8412128c765.png">
 
 ## Other
 
@@ -87,14 +100,6 @@ def filterTemplate(emails):
 
 foundEmails = filterTemplate(emails)
 ```
-
-## GUI (in progress)
-
-To run:
-
-`python gui.py`
-
-![image](https://user-images.githubusercontent.com/53503018/123910424-09c56d80-d940-11eb-92fa-617673a2914b.png)
 
 ## Link Dump
 
