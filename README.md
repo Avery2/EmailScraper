@@ -16,15 +16,28 @@ If you want to use GUI:
 
 ## Running
 
-### How To Run
+You have two options. Run with the gui or run with terminal. Below are more detailed instructions.
 
-Run in terminal with: `python main.py` (or `python3 main.py`).
+1. GUI:      `python gui.py`
+2. TERMINAL: `python main.py`
+
+
 You must use python version 3.6 or above.
 I've only run it on Python 3.9.
+
+### GUI (now working!)
+
+To run:
+
+`python gui.py`
+
+<img width="1322" alt="Screen Shot 2021-07-03 at 10 35 08 AM" src="https://user-images.githubusercontent.com/53503018/124359420-7368a480-dbea-11eb-9679-40bc46282881.png">
 
 ### Command line options
 
 UPDATE: How the program is run has changed. It is now purely through the command line.
+
+Run in terminal with: `python main.py` (or `python3 main.py`). Below are description of the optional flags.
 
 ```
 main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearch=<value> --doGoogleSearch=<value> --delaySeconds=<value> --quoteEachWord=<value> --createCombined=<value> --disableColors=<value> --doPrimaryEmailCheck=<value> --applySecondaryFilters=<value> --sortOutput=<value> --showText=<value> --makeLowercase
@@ -87,15 +100,6 @@ def filterTemplate(emails):
 
 foundEmails = filterTemplate(emails)
 ```
-
-## GUI (now working!)
-
-To run:
-
-`python gui.py`
-
-<img width="1322" alt="Screen Shot 2021-07-03 at 10 35 08 AM" src="https://user-images.githubusercontent.com/53503018/124359420-7368a480-dbea-11eb-9679-40bc46282881.png">
-
 
 ## Link Dump
 
