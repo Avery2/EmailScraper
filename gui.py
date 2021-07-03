@@ -33,13 +33,13 @@ class BaseThread(Thread):
 
 
 def createInputLabel(str='ERROR', default_text=""):
-    a = sg.Text(str)
-    b = sg.Input(key=f"_{str}_", default_text=default_text)
+    a = sg.Text(str, font="Monaco")
+    b = sg.Input(key=f"_{str}_", font="Monaco", default_text=default_text)
     return [a, b]
 
 
 def createCheckboxLabel(str='ERROR', default=False):
-    return [sg.Checkbox(str, key=f"_{str}_", default=default)]
+    return [sg.Checkbox(str, font="Monaco", key=f"_{str}_", default=default)]
 
 
 globals.options['disableColors'] = True
@@ -49,8 +49,8 @@ for o in globals.options:
     # Manual GUI elements
 
     if o == "inputFile":
-        options.append([sg.Text('Input File'),
-                        sg.InputText('input/TestCaseEmailScript.csv', k="_inputFile_"), sg.FileBrowse()])
+        options.append([sg.Text('Input File', font="Monaco"),
+                        sg.InputText('input/TestCaseEmailScript.csv', k="_inputFile_", font="Monaco"), sg.FileBrowse()])
         continue
 
     # Auto GUI from parameters
@@ -61,8 +61,10 @@ for o in globals.options:
     elif isinstance(globals.options[o], str):
         options.append(createInputLabel(o, globals.options[o]))
 
-col1 = [[sg.Frame("Parameters", layout=options)], [sg.Text(size=(60, 10), font="Monaco", key='_output_')]]
-col2 = [[sg.Output(size=(80, 30), font="Monaco", echo_stdout_stderr=True, key="_term_")]]
+col1 = [[sg.Frame("Parameters", layout=options)],
+        [sg.Text(size=(60, 10), font="Monaco", key='_output_')],
+        [sg.Text(size=(20, 10), font="Monaco", key='_outputfile_')]]
+col2 = [[sg.Output(size=(100, 45), font="Monaco", echo_stdout_stderr=True, key="_term_")]]
 layout = [
     [sg.Column(layout=col1), sg.Column(layout=col2)],
     [sg.Button('Run Search', key="_run_", disabled_button_color="grey"), sg.Button('Clear Output', key="_clear_")]]
@@ -99,6 +101,7 @@ while True:
         window.FindElement("_run_").Update(disabled=True)
 
     window['_output_'].update(allVals)
+    window['_outputfile_'].update("OUTPUT")
     window.Refresh()
 
 window.close()
