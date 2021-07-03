@@ -46,6 +46,14 @@ globals.options['disableColors'] = True
 
 options = []
 for o in globals.options:
+    # Manual GUI elements
+
+    if o == "inputFile":
+        options.append([sg.Text('Input File'),
+                        sg.InputText('input/TestCaseEmailScript.csv', k="_inputFile_"), sg.FileBrowse()])
+        continue
+
+    # Auto GUI from parameters
     if isinstance(globals.options[o], bool):
         options.append(createCheckboxLabel(o, globals.options[o]))
     elif isinstance(globals.options[o], int):
@@ -80,11 +88,6 @@ while True:
     for p in globals.optionNames:
         val = values[f"_{p}_"]
         allVals += f"{p.ljust(25)}{str(val)}\n"
-        # try:
-        #     val = int(val)
-        # except ValueError:
-        #     pass
-        # globals.options[p] = val
         param.append(f"--{p}")
         param.append(f"{val}")
 
