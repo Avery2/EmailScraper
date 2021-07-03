@@ -62,12 +62,13 @@ for o in globals.options:
         options.append(createInputLabel(o, globals.options[o]))
 
 col1 = [[sg.Frame("Parameters", layout=options)],
-        [sg.Text(size=(60, 10), font="Monaco", key='_output_')],
-        [sg.Text(size=(20, 10), font="Monaco", key='_outputfile_')]]
+        [sg.Text(size=(60, 10), font="Monaco", key='_output_')], ]
 col2 = [[sg.Output(size=(100, 45), font="Monaco", echo_stdout_stderr=True, key="_term_")]]
 layout = [
     [sg.Column(layout=col1), sg.Column(layout=col2)],
-    [sg.Button('Run Search', key="_run_", disabled_button_color="grey"), sg.Button('Clear Output', key="_clear_")]]
+    [sg.Button('Run Search', key="_run_", disabled_button_color="grey"),
+     sg.Button('Clear Output', key="_clear_"),
+     sg.Button('Quit', key="_quit_")]]
 window = sg.Window('Window Title', layout)
 
 
@@ -82,14 +83,14 @@ def on_done():
 
 while True:
     event, values = window.read()
-    if event == sg.WINDOW_CLOSED:
+    if event == sg.WINDOW_CLOSED or event == "_quit_":
         break
 
     param = []
-    allVals = ''
+    outputText = ''
     for p in globals.optionNames:
         val = values[f"_{p}_"]
-        allVals += f"{p.ljust(25)}{str(val)}\n"
+        outputText += f"{p.ljust(20)}{str(val)}\n"
         param.append(f"--{p}")
         param.append(f"{val}")
 
@@ -100,8 +101,7 @@ while True:
         wrapped_worker(param)
         window.FindElement("_run_").Update(disabled=True)
 
-    window['_output_'].update(allVals)
-    window['_outputfile_'].update("OUTPUT")
+    window['_output_'].update(outputText)
     window.Refresh()
 
 window.close()
