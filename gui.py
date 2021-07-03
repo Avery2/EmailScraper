@@ -40,6 +40,12 @@ def createInputLabel(str='ERROR', default_text=""):
     return [a, b]
 
 
+def createInputLabelInt(str='ERROR', default_text=""):
+    a = sg.Text(str, font="Monaco")
+    b = sg.Input(s=(4, 1), key=f"_{str}_", font="Monaco", default_text=default_text)
+    return [a, b]
+
+
 def createCheckboxLabel(str='ERROR', default=False):
     return [sg.Checkbox(str, font="Monaco", key=f"_{str}_", default=default)]
 
@@ -59,7 +65,7 @@ for o in globals.options:
     if isinstance(globals.options[o], bool):
         options.append(createCheckboxLabel(o, globals.options[o]))
     elif isinstance(globals.options[o], int):
-        options.append(createInputLabel(o, globals.options[o]))
+        options.append(createInputLabelInt(o, globals.options[o]))
     elif isinstance(globals.options[o], str):
         options.append(createInputLabel(o, globals.options[o]))
 

@@ -4,3 +4,4 @@
 *.xls
 *.pyc
 __pycache__/
+.husky/
