@@ -4,6 +4,7 @@ from threading import Thread
 import globals
 import subprocess
 import os
+import types
 
 globals.initialize()
 
@@ -34,20 +35,20 @@ class BaseThread(Thread):
                 self.callback()
 
 
-def createInputLabel(str='ERROR', default_text=""):
-    a = sg.Text(str, font="Monaco")
-    b = sg.Input(key=f"_{str}_", font="Monaco", default_text=default_text)
+def createInputLabel(text='ERROR', default_text=""):
+    a = sg.Text(text, font="Monaco", s=(15, 1))
+    b = sg.Input(key=f"_{text}_", font="Monaco", default_text=default_text)
     return [a, b]
 
 
-def createInputLabelInt(str='ERROR', default_text=""):
-    a = sg.Text(str, font="Monaco")
-    b = sg.Input(s=(4, 1), key=f"_{str}_", font="Monaco", default_text=default_text)
+def createInputLabelInt(text='ERROR', default_text=""):
+    a = sg.Text(text, font="Monaco", s=(15, 1))
+    b = sg.Input(s=(4, 1), key=f"_{text}_", font="Monaco", default_text=default_text)
     return [a, b]
 
 
-def createCheckboxLabel(str='ERROR', default=False):
-    return [sg.Checkbox(str, font="Monaco", key=f"_{str}_", default=default)]
+def createCheckboxLabel(text='ERROR', default=False):
+    return [sg.Checkbox(text, font="Monaco", key=f"_{text}_", default=default)]
 
 
 globals.options['disableColors'] = True
@@ -57,8 +58,8 @@ for o in globals.options:
     # Manual GUI elements
 
     if o == "inputFile":
-        options.append([sg.Text('Input File', font="Monaco"),
-                        sg.InputText('input/TestCaseEmailScript.csv', k="_inputFile_", font="Monaco"), sg.FileBrowse()])
+        options.append([sg.Text('Input File', font="Monaco", s=(15, 1)),
+                        sg.InputText('input/TestCaseEmailScript.csv', k="_inputFile_", font="Monaco", s=(30, 1)), sg.FileBrowse()])
         continue
 
     # Auto GUI from parameters
@@ -69,15 +70,17 @@ for o in globals.options:
     elif isinstance(globals.options[o], str):
         options.append(createInputLabel(o, globals.options[o]))
 
+options.sort(key=lambda x: (type(x[0]).__name__, len(x)), reverse=True)
+
 initialText = ''
 for p in globals.optionNames:
     initialText += f"{p.ljust(25)}None\n"
 
 col1 = [[sg.Frame("Options", layout=options)],
-        [sg.Frame("Parameters", layout=[[sg.Text(text=initialText, size=(64, 15), font="Monaco", key='_output_')]])],
-        [sg.Frame("Output", layout=[[sg.Button('Open Output Folder', key="_open_",
-                                               disabled_button_color="grey", disabled=True),
-                                     sg.Text(size=(50, 1), font="Monaco", key='_outputfile_')]])]]
+        # [sg.Frame("Parameters", layout=[[sg.Text(text=initialText, size=(54, 15), font="Monaco", key='_output_')]])],
+        [sg.Button('Open Output Folder', key="_open_", disabled_button_color="grey", disabled=True),
+         sg.Text(size=(40, 1), font="Monaco", key='_outputfile_')]
+        ]
 col2 = [[sg.Output(size=(100, 45), font="Monaco", echo_stdout_stderr=True, key="_term_")]]
 layout = [
     [sg.Column(layout=col1), sg.Column(layout=col2)],
@@ -97,7 +100,7 @@ def on_done():
     window.FindElement("_run_").Update(disabled=False)
     window.FindElement("_open_").Update(disabled=False)
     window.FindElement("_terminate_").Update(disabled=True)
-    window['_outputfile_'].update(globals.output["outputPath"])
+    window['_outputfile_'].update(f"Output file in {globals.output['outputPath']}")
     window.Refresh()
 
 
@@ -110,10 +113,10 @@ while True:
     event, values = window.read()
 
     param = []
-    outputText = ''
+    # outputText = ''
     for p in globals.optionNames:
-        val = values[f"_{p}_"]
-        outputText += f"{p.ljust(25)}{str(val)}\n"
+        val = values[f"_{p}_"] if values else ''
+        # outputText += f"{p.ljust(25)}{str(val)}\n"
         param.append(f"--{p}")
         param.append(f"{val}")
 
@@ -134,7 +137,7 @@ while True:
     elif event == "_open_":
         subprocess.call(["open", "-R", globals.output["outputPath"]])
 
-    window['_output_'].update(outputText)
+    # window['_output_'].update(outputText)
     window.Refresh()
 
 window.close()
