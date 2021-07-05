@@ -21,21 +21,20 @@ You have two options. Run with the gui or run with terminal. Below are more deta
 1. GUI:      `python gui.py`
 2. TERMINAL: `python main.py`
 
-
 You must use python version 3.6 or above.
 I've only run it on Python 3.9.
 
 ### GUI (now working!)
 
-To run:
+The GUI calls `main.py` in the backend so it should behave the same. There are some simple changes that make it easier to choose input files and do multiple runs.
 
-`python gui.py`
+To run: `python gui.py` (or `python3 gui.py`)
 
 <img width="1446" alt="Screen Shot 2021-07-04 at 8 15 51 PM" src="https://user-images.githubusercontent.com/53503018/124405582-a2733900-dd04-11eb-8a47-fadee7fe793b.png">
 
 ### Command line options
 
-UPDATE: How the program is run has changed. It is now purely through the command line.
+UPDATE: How the program is run has changed. You no longer have to edit values in the source code.
 
 Run in terminal with: `python main.py` (or `python3 main.py`). Below are description of the optional flags.
 
