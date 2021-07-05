@@ -60,9 +60,7 @@ Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.
 
 <img width="1552" alt="Screen Shot 2021-07-03 at 10 34 48 AM" src="https://user-images.githubusercontent.com/53503018/124359417-6cda2d00-dbea-11eb-888e-c8412128c765.png">
 
-Example with all flags:
-
-`python main.py --startRow 1 --numSearch 5 --inputFile input/TestCaseEmailScript.csv --doBingSearch True --doGoogleSearch False --delaySeconds 0 --quoteEachWord True --createCombined True --disableColors True --doPrimaryEmailCheck True --applySecondaryFilters True --sortOutput True --showText False --makeLowercase True --showURL True`
+Example with all flags: `python main.py --startRow 1 --numSearch 5 --inputFile input/TestCaseEmailScript.csv --doBingSearch True --doGoogleSearch False --delaySeconds 0 --quoteEachWord True --createCombined True --disableColors True --doPrimaryEmailCheck True --applySecondaryFilters True --sortOutput True --showText False --makeLowercase True --showURL True`
 
 ## Other
 
