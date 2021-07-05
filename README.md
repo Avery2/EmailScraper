@@ -18,7 +18,7 @@ If you want to use GUI:
 
 You have two options. Run with the gui or run with terminal. Below are more detailed instructions.
 
-1. GUI:      `python gui.py`
+1. GUI: `python gui.py`
 2. TERMINAL: `python main.py`
 
 You must use python version 3.6 or above.
@@ -37,10 +37,6 @@ To run: `python gui.py` (or `python3 gui.py`)
 UPDATE: How the program is run has changed. You no longer have to edit values in the source code.
 
 Run in terminal with: `python main.py` (or `python3 main.py`). Below are description of the optional flags.
-
-```
-main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearch=<value> --doGoogleSearch=<value> --delaySeconds=<value> --quoteEachWord=<value> --createCombined=<value> --disableColors=<value> --doPrimaryEmailCheck=<value> --applySecondaryFilters=<value> --sortOutput=<value> --showText=<value> --makeLowercase
-```
 
 | Option                | Description                                                                                | Default Value                 |
 | --------------------- | ------------------------------------------------------------------------------------------ | ----------------------------- |
@@ -63,6 +59,10 @@ main.py --startRow=<value> --numSearch=<value> --inputFile=<value> --doBingSearc
 Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.csv`
 
 <img width="1552" alt="Screen Shot 2021-07-03 at 10 34 48 AM" src="https://user-images.githubusercontent.com/53503018/124359417-6cda2d00-dbea-11eb-888e-c8412128c765.png">
+
+Example with all flags:
+
+`python main.py --startRow 1 --numSearch 5 --inputFile input/TestCaseEmailScript.csv --doBingSearch True --doGoogleSearch False --delaySeconds 0 --quoteEachWord True --createCombined True --disableColors True --doPrimaryEmailCheck True --applySecondaryFilters True --sortOutput True --showText False --makeLowercase True --showURL True`
 
 ## Other
 
