@@ -31,7 +31,7 @@ To run:
 
 `python gui.py`
 
-<img width="1530" alt="Screen Shot 2021-07-03 at 1 17 50 PM" src="https://user-images.githubusercontent.com/53503018/124363490-217f4900-dc01-11eb-8aef-07e3af704326.png">
+<img width="1446" alt="Screen Shot 2021-07-04 at 8 15 51 PM" src="https://user-images.githubusercontent.com/53503018/124405582-a2733900-dd04-11eb-8a47-fadee7fe793b.png">
 
 ### Command line options
 
