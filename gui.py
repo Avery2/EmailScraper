@@ -70,7 +70,7 @@ for o in globals.options:
     elif isinstance(globals.options[o], str):
         options.append(createInputLabel(o, globals.options[o]))
 
-options.sort(key=lambda x: (type(x[0]).__name__, len(x)), reverse=True)
+options.sort(key=lambda x: (type(x[0]).__name__, str(len(x))), reverse=True)
 
 initialText = ''
 for p in globals.optionNames:

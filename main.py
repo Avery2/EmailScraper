@@ -137,6 +137,7 @@ class EmailBot:
 
             myRegularExpression = r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
             foundTerms = re.findall(myRegularExpression, txt)
+            foundTerms = [e.strip(".") for e in foundTerms]
             return filterFoundTerms(foundTerms)
 
         def rowToQueries(row):
