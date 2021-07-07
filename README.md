@@ -60,11 +60,11 @@ Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.
 
 <img width="1552" alt="Screen Shot 2021-07-03 at 10 34 48 AM" src="https://user-images.githubusercontent.com/53503018/124359417-6cda2d00-dbea-11eb-888e-c8412128c765.png">
 
-Example with all flags:
-
-`python main.py --startRow 1 --numSearch 5 --inputFile input/TestCaseEmailScript.csv --doBingSearch True --doGoogleSearch False --delaySeconds 0 --quoteEachWord True --createCombined True --disableColors True --doPrimaryEmailCheck True --applySecondaryFilters True --sortOutput True --showText False --makeLowercase True --showURL True`
+Example with all flags: `python main.py --startRow 1 --numSearch 5 --inputFile input/TestCaseEmailScript.csv --doBingSearch True --doGoogleSearch False --delaySeconds 0 --quoteEachWord True --createCombined True --disableColors True --doPrimaryEmailCheck True --applySecondaryFilters True --sortOutput True --showText False --makeLowercase True --showURL True`
 
 ## Other
+
+### CSV structure
 
 Code assumes the input file has this structure:
 
@@ -76,6 +76,8 @@ Code assumes the input file has this structure:
 5th column = key term 2
 ...
 ```
+
+### Custom Filters
 
 Example filter function that just removes the first email if it exists. This function would go in the `FILTER LOGIC` section of the `applySecondaryFilters` function in case you want to apply your own filter. To do this just make your own function in a similar form that takes in the `foundEmails` list, mutates it by removing whatever you wany, and returns it. Then call your function and set the `foundEmails`
 
