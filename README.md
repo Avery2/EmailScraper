@@ -23,6 +23,7 @@ You have two options. Run with the gui or run with terminal. Below are more deta
 
 You must use python version 3.6 or above.
 I've only run it on Python 3.9.
+Additionally, some functionality will only work on a Mac.
 
 ### GUI (now working!)
 
