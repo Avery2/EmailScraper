@@ -339,8 +339,8 @@ class EmailBot:
             # Remove any elements in list with the value: None
             foundEmails = list(filter(None, foundEmails))
 
-            print(f"{PrintColors.bold}Filtered Emails: {len(foundEmails)}:{PrintColors.reset} {foundEmails}")
-            print(f"Filtered out {PrintColors.red}0{PrintColors.reset} emails.") if numBefore - numAfter == 0 else print(f"Filtered out {PrintColors.bold}{numBefore - numAfter}{PrintColors.reset} emails.\n")
+            print(f"{PrintColors.bold}Filtered Emails: {len(foundEmails)}:{PrintColors.reset} {foundEmails}") if len(foundEmails) > 0 else print(f"{PrintColors.bold}Filtered Emails: {PrintColors.red}{len(foundEmails)}:{PrintColors.reset} {foundEmails}")
+            print(f"Found {PrintColors.red}0{PrintColors.reset} emails after filters.") if numBefore - numAfter == 0 else print(f"Found {PrintColors.bold}{numBefore - numAfter}{PrintColors.reset} emails after filters.\n")
             return inputRows, foundEmails
 
         with open(globals.options['inputFile'], 'r') as f1, open(EmailBot.outputPath+EmailBot.queryFilename, 'r') as f2, open(EmailBot.outputPath+prefix+EmailBot.combinedFilename, 'w') as w:
