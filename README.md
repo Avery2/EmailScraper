@@ -104,6 +104,10 @@ def filterTemplate(emails):
 foundEmails = filterTemplate(emails)
 ```
 
+### Blacklisting URLs
+
+When you search each url for emails (when the `searchURLs` flag is true, which it is by default) there are some URLs that may cause the script to crash. Add these URLs to the `BLACKLIST` constant in the `main.py` file to ignore them.
+
 ## Link Dump
 
 [[Writing to file in python]](https://www.w3schools.com/python/python_file_write.asp)
