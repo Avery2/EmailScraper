@@ -56,6 +56,7 @@ Run in terminal with: `python main.py` (or `python3 main.py`). Below are descrip
 | showText              | (bool) Shows the raw text the search found                                                 | False                         |
 | makeLowercase         | (bool) Makes the emails lowercase (and therefore not case sensitive)                       | True                          |
 | showURL               | (bool) Shows search query URL                                                              | True                          |
+| searchURLs            | (bool) Does a search for email on every link found                                         | True                          |
 
 Example: `python main.py --numSearch 0 --inputFile input/UpdatedTestCaseHubSpot.csv`
 
