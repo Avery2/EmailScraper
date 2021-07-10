@@ -1,7 +1,7 @@
 import os
 import csv
 import requests
-import bs4
+from bs4 import BeautifulSoup, SoupStrainer
 import re
 import time
 from validate_email import validate_email
@@ -9,6 +9,7 @@ import random
 import sys
 import getopt
 import globals
+import signal
 
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
 BING_QUERY_URL = 'https://bing.com/search?q='
@@ -22,6 +23,7 @@ AGENT_LIST = [
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
     'Mozilla/5.0 (iPhone; CPU iPhone OS 11_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
 ]
+BLACKLIST = ["tripadvisor.com", "go.microsoft.com", "maps.apple.com", "pdf$"]
 
 
 class PrintColors:
@@ -52,6 +54,42 @@ class PrintColors:
         PrintColors.bold = "\u001b[1m" if not globals.options['disableColors'] else ''
         PrintColors.underline = "\u001b[4m" if not globals.options['disableColors'] else ''
         PrintColors.reverse = "\u001b[7m" if not globals.options['disableColors'] else ''
+
+    def setBlack():
+        print(PrintColors.black, end='')
+
+    def setRed():
+        print(PrintColors.red, end='')
+
+    def setGreen():
+        print(PrintColors.green, end='')
+
+    def setYellow():
+        print(PrintColors.yellow, end='')
+
+    def setBlue():
+        print(PrintColors.blue, end='')
+
+    def setMagenta():
+        print(PrintColors.magenta, end='')
+
+    def setCyan():
+        print(PrintColors.cyan, end='')
+
+    def setWhite():
+        print(PrintColors.white, end='')
+
+    def setReset():
+        print(PrintColors.reset, end='')
+
+    def setBold():
+        print(PrintColors.bold, end='')
+
+    def setUnderline():
+        print(PrintColors.underline, end='')
+
+    def setReverse():
+        print(PrintColors.reverse, end='')
 
 
 class EmailBot:
@@ -86,19 +124,51 @@ class EmailBot:
     def runSearch():
         def doSearch(terms=["default text"]):
             def getQueryText(text="default text", queryurl=BING_QUERY_URL):
-                headers = {
-                    'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST)-1)],
-                }
-                url = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
+
+                def getQueryTextHelper(text="default text", url=''):
+                    if globals.terminate_early:
+                        return '', []
+                    try:
+                        headers = {'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST) - 1)]}
+                        request_result = requests.get(url, headers=headers)
+                        soup = BeautifulSoup(request_result.text,
+                                             "html.parser")
+                        if globals.options['searchURLs']:
+                            links = []
+                            for link in soup.find_all('a'):
+                                href = link.get('href')
+                                if href:
+                                    for thing in BLACKLIST:
+                                        if len(re.findall(thing, href)) > 0:
+                                            href = None
+                                            break
+                                if not href or href[0:4] != 'http':
+                                    continue
+                                links.append(href)
+                            links = list(set(links))
+                        txt = soup.get_text()
+                        if globals.options['showText']:
+                            print(txt)
+                            print(soup.find_all('p'))
+                        return txt, links
+                    except requests.exceptions.ConnectionError:
+                        print(f"\n{PrintColors.red}WARNING: There was a connection error.{PrintColors.reset}\n")
+                        return '', []
+
+                searchUrl = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
                 if globals.options['showURL']:
-                    print(f"Search: {PrintColors.blue}{url}{PrintColors.reset}")
-                request_result = requests.get(url, headers=headers)
-                soup = bs4.BeautifulSoup(request_result.text,
-                                         "html.parser")
-                txt = soup.get_text()
-                if globals.options['showText']:
-                    print(txt)
-                    print(soup.find_all('p'))
+                    print(f"Search: {PrintColors.blue}{searchUrl}{PrintColors.reset}")
+                txt, links = getQueryTextHelper(text, searchUrl)
+                if globals.options['searchURLs']:
+                    print("Searching Found Links:")
+                    for link in links:
+                        if globals.terminate_early:
+                            return txt
+                        current_time = time.strftime("%H:%M:%S", time.localtime())
+                        print(f"\t{current_time}: {PrintColors.blue}{link}{PrintColors.reset}")
+                        link_txt, link_links = getQueryTextHelper(url=link)
+                        txt += link_txt
+
                 return txt
 
             def filterFoundTerms(foundTerms):
@@ -128,6 +198,8 @@ class EmailBot:
 
             txt = ''
             for term in terms:
+                if globals.terminate_early:
+                    return []
                 if globals.options['doBingSearch']:
                     txt += getQueryText(term, BING_QUERY_URL)
                 if globals.options['doGoogleSearch']:
@@ -286,7 +358,6 @@ class EmailBot:
 
 
 def main(argv):
-    PrintColors.update()
     EmailBot.update()
     # Command line parsing
     longOpts = [f'{e}=' for e in globals.optionNames].copy()
@@ -298,9 +369,9 @@ def main(argv):
         print('main.py ' + '=<value> '.join([f'--{e}' for e in globals.optionNames]))
         sys.exit(2)
     for opt, arg in opts:
-        print(f"{opt} {arg}")
+        # print(f"{opt} {arg}")
         if opt in ('-h', '--help'):
-            print('main.py ' + '=<value> '.join([f'--{e}' for e in globals.optionNames]))
+            print('main.py ' + '=<value> '.join([f'--{e}' for e in globals.optionNames]), end='=<value>\n')
             sys.exit()
         elif opt in [f'--{e}' for e in globals.optionNames]:
             if arg.lower() in ['t', 'true']:
@@ -313,6 +384,7 @@ def main(argv):
                 except ValueError:
                     globals.options[opt[2:]] = arg
 
+    PrintColors.update()
     EmailBot.run()
 
 

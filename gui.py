@@ -77,7 +77,6 @@ for p in globals.optionNames:
     initialText += f"{p.ljust(25)}None\n"
 
 col1 = [[sg.Frame("Options", layout=options)],
-        # [sg.Frame("Parameters", layout=[[sg.Text(text=initialText, size=(54, 15), font="Monaco", key='_output_')]])],
         [sg.Button('Open Output Folder', key="_open_", disabled_button_color="grey", disabled=True),
          sg.Text(size=(40, 1), font="Monaco", key='_outputfile_')]
         ]
@@ -111,12 +110,9 @@ def on_done_terminated():
 
 while True:
     event, values = window.read()
-
     param = []
-    # outputText = ''
     for p in globals.optionNames:
         val = values[f"_{p}_"] if values else ''
-        # outputText += f"{p.ljust(25)}{str(val)}\n"
         param.append(f"--{p}")
         param.append(f"{val}")
 
@@ -137,7 +133,6 @@ while True:
     elif event == "_open_":
         subprocess.call(["open", "-R", globals.output["outputPath"]])
 
-    # window['_output_'].update(outputText)
     window.Refresh()
 
 window.close()

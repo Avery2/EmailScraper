@@ -25,7 +25,8 @@ def initialize():
                    'sortOutput',
                    'showText',
                    'makeLowercase',
-                   'showURL']
+                   'showURL',
+                   'searchURLs']
 
     global options
     options = {optionNames[0]: 1,  # startRow
@@ -42,7 +43,9 @@ def initialize():
                optionNames[11]: True,  # sortOutput
                optionNames[12]: False,  # showText
                optionNames[13]: True,  # makeLowercase
-               optionNames[14]: True}  # showURL
+               optionNames[14]: True,  # showURL
+               optionNames[15]: True,  # searchURLs
+               }
 
     global output
     output = {"outputPath": None}
