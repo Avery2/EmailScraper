@@ -1,5 +1,7 @@
 # Email Scraper
 
+[![Python application](https://github.com/Avery2/EmailScraper/actions/workflows/python-app.yml/badge.svg)](https://github.com/Avery2/EmailScraper/actions/workflows/python-app.yml)
+
 Takes input csv of search terms, does Bing search, outputs found emails.
 
 ## Installing (not comprehensive)
