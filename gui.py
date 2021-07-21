@@ -1,12 +1,12 @@
 import PySimpleGUI as sg
 import main
 from threading import Thread
-import globals
+import my_globals
 import subprocess
 import os
 import types
 
-globals.initialize()
+my_globals.initialize()
 
 
 class BaseThread(Thread):
@@ -51,10 +51,10 @@ def createCheckboxLabel(text='ERROR', default=False):
     return [sg.Checkbox(text, font="Monaco", key=f"_{text}_", default=default)]
 
 
-globals.options['disableColors'] = True
+my_globals.options['disableColors'] = True
 
 options = []
-for o in globals.options:
+for o in my_globals.options:
     # Manual GUI elements
 
     if o == "inputFile":
@@ -63,17 +63,17 @@ for o in globals.options:
         continue
 
     # Auto GUI from parameters
-    if isinstance(globals.options[o], bool):
-        options.append(createCheckboxLabel(o, globals.options[o]))
-    elif isinstance(globals.options[o], int):
-        options.append(createInputLabelInt(o, globals.options[o]))
-    elif isinstance(globals.options[o], str):
-        options.append(createInputLabel(o, globals.options[o]))
+    if isinstance(my_globals.options[o], bool):
+        options.append(createCheckboxLabel(o, my_globals.options[o]))
+    elif isinstance(my_globals.options[o], int):
+        options.append(createInputLabelInt(o, my_globals.options[o]))
+    elif isinstance(my_globals.options[o], str):
+        options.append(createInputLabel(o, my_globals.options[o]))
 
 options.sort(key=lambda x: (type(x[0]).__name__, str(len(x))), reverse=True)
 
 initialText = ''
-for p in globals.optionNames:
+for p in my_globals.optionNames:
     initialText += f"{p.ljust(25)}None\n"
 
 col1 = [[sg.Frame("Options", layout=options)],
@@ -99,7 +99,7 @@ def on_done():
     window.FindElement("_run_").Update(disabled=False)
     window.FindElement("_open_").Update(disabled=False)
     window.FindElement("_terminate_").Update(disabled=True)
-    window['_outputfile_'].update(f"Output file in {globals.output['outputPath']}")
+    window['_outputfile_'].update(f"Output file in {my_globals.output['outputPath']}")
     window.Refresh()
 
 
@@ -111,7 +111,7 @@ def on_done_terminated():
 while True:
     event, values = window.read()
     param = []
-    for p in globals.optionNames:
+    for p in my_globals.optionNames:
         val = values[f"_{p}_"] if values else ''
         param.append(f"--{p}")
         param.append(f"{val}")
@@ -119,7 +119,7 @@ while True:
     if event == sg.WINDOW_CLOSED or event == "_quit_":
         break
     elif event == '_terminate_':
-        globals.terminate_early = True
+        my_globals.terminate_early = True
         window.FindElement("_terminate_").Update(disabled=True)
         print(f"\n\n{'!'*15}\nEnding search. Please wait for \"Search Ended\" before starting new search.\n{'!'*15}\n")
         on_done_terminated()
@@ -131,7 +131,7 @@ while True:
         window.FindElement("_open_").Update(disabled=True)
         window.FindElement("_terminate_").Update(disabled=False)
     elif event == "_open_":
-        subprocess.call(["open", "-R", globals.output["outputPath"]])
+        subprocess.call(["open", "-R", my_globals.output["outputPath"]])
 
     window.Refresh()
 

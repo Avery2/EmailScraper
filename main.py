@@ -8,7 +8,7 @@ from validate_email import validate_email
 import random
 import sys
 import getopt
-import globals
+import my_globals
 import signal
 
 GOOGLE_QUERY_URL = 'https://google.com/search?q='
@@ -27,33 +27,33 @@ BLACKLIST = ["tripadvisor.com", "go.microsoft.com", "maps.apple.com", "pdf$"]
 
 
 class PrintColors:
-    globals.initialize()
-    black = "\u001b[30m" if not globals.options['disableColors'] else ''
-    red = "\u001b[31m" if not globals.options['disableColors'] else ''
-    green = "\u001b[32m" if not globals.options['disableColors'] else ''
-    yellow = "\u001b[33m" if not globals.options['disableColors'] else ''
-    blue = "\u001b[34m" if not globals.options['disableColors'] else ''
-    magenta = "\u001b[35m" if not globals.options['disableColors'] else ''
-    cyan = "\u001b[36m" if not globals.options['disableColors'] else ''
-    white = "\u001b[37m" if not globals.options['disableColors'] else ''
-    reset = "\u001b[0m" if not globals.options['disableColors'] else ''
-    bold = "\u001b[1m" if not globals.options['disableColors'] else ''
-    underline = "\u001b[4m" if not globals.options['disableColors'] else ''
-    reverse = "\u001b[7m" if not globals.options['disableColors'] else ''
+    my_globals.initialize()
+    black = "\u001b[30m" if not my_globals.options['disableColors'] else ''
+    red = "\u001b[31m" if not my_globals.options['disableColors'] else ''
+    green = "\u001b[32m" if not my_globals.options['disableColors'] else ''
+    yellow = "\u001b[33m" if not my_globals.options['disableColors'] else ''
+    blue = "\u001b[34m" if not my_globals.options['disableColors'] else ''
+    magenta = "\u001b[35m" if not my_globals.options['disableColors'] else ''
+    cyan = "\u001b[36m" if not my_globals.options['disableColors'] else ''
+    white = "\u001b[37m" if not my_globals.options['disableColors'] else ''
+    reset = "\u001b[0m" if not my_globals.options['disableColors'] else ''
+    bold = "\u001b[1m" if not my_globals.options['disableColors'] else ''
+    underline = "\u001b[4m" if not my_globals.options['disableColors'] else ''
+    reverse = "\u001b[7m" if not my_globals.options['disableColors'] else ''
 
     def update():
-        PrintColors.black = "\u001b[30m" if not globals.options['disableColors'] else ''
-        PrintColors.red = "\u001b[31m" if not globals.options['disableColors'] else ''
-        PrintColors.green = "\u001b[32m" if not globals.options['disableColors'] else ''
-        PrintColors.yellow = "\u001b[33m" if not globals.options['disableColors'] else ''
-        PrintColors.blue = "\u001b[34m" if not globals.options['disableColors'] else ''
-        PrintColors.magenta = "\u001b[35m" if not globals.options['disableColors'] else ''
-        PrintColors.cyan = "\u001b[36m" if not globals.options['disableColors'] else ''
-        PrintColors.white = "\u001b[37m" if not globals.options['disableColors'] else ''
-        PrintColors.reset = "\u001b[0m" if not globals.options['disableColors'] else ''
-        PrintColors.bold = "\u001b[1m" if not globals.options['disableColors'] else ''
-        PrintColors.underline = "\u001b[4m" if not globals.options['disableColors'] else ''
-        PrintColors.reverse = "\u001b[7m" if not globals.options['disableColors'] else ''
+        PrintColors.black = "\u001b[30m" if not my_globals.options['disableColors'] else ''
+        PrintColors.red = "\u001b[31m" if not my_globals.options['disableColors'] else ''
+        PrintColors.green = "\u001b[32m" if not my_globals.options['disableColors'] else ''
+        PrintColors.yellow = "\u001b[33m" if not my_globals.options['disableColors'] else ''
+        PrintColors.blue = "\u001b[34m" if not my_globals.options['disableColors'] else ''
+        PrintColors.magenta = "\u001b[35m" if not my_globals.options['disableColors'] else ''
+        PrintColors.cyan = "\u001b[36m" if not my_globals.options['disableColors'] else ''
+        PrintColors.white = "\u001b[37m" if not my_globals.options['disableColors'] else ''
+        PrintColors.reset = "\u001b[0m" if not my_globals.options['disableColors'] else ''
+        PrintColors.bold = "\u001b[1m" if not my_globals.options['disableColors'] else ''
+        PrintColors.underline = "\u001b[4m" if not my_globals.options['disableColors'] else ''
+        PrintColors.reverse = "\u001b[7m" if not my_globals.options['disableColors'] else ''
 
     def setBlack():
         print(PrintColors.black, end='')
@@ -111,12 +111,12 @@ class EmailBot:
         numFoundEmails = EmailBot.runSearch()
         print(f"Found {PrintColors.bold}{numFoundEmails}{PrintColors.reset} emails.\n")
         print("Applying secondary filters...")
-        if globals.options['applySecondaryFilters']:
+        if my_globals.options['applySecondaryFilters']:
             EmailBot.createFilteredCSV(f"{numFoundEmails}-filtered_")
-        if globals.options['createCombined']:
+        if my_globals.options['createCombined']:
             EmailBot.createCombinedCSV(f"{numFoundEmails}_")
         outputMsg = f"Output in {PrintColors.bold}./{EmailBot.outputPath}{PrintColors.reset}"
-        globals.output["outputPath"] = EmailBot.outputPath
+        my_globals.output["outputPath"] = EmailBot.outputPath
         print(outputMsg)
         print("="*10 + '\n')
         return outputMsg
@@ -126,14 +126,14 @@ class EmailBot:
             def getQueryText(text="default text", queryurl=BING_QUERY_URL):
 
                 def getQueryTextHelper(text="default text", url=''):
-                    if globals.terminate_early:
+                    if my_globals.terminate_early:
                         return '', []
                     try:
                         headers = {'user-agent': AGENT_LIST[random.randint(0, len(AGENT_LIST) - 1)]}
                         request_result = requests.get(url, headers=headers)
                         soup = BeautifulSoup(request_result.text,
                                              "html.parser")
-                        if globals.options['searchURLs']:
+                        if my_globals.options['searchURLs']:
                             links = []
                             for link in soup.find_all('a'):
                                 href = link.get('href')
@@ -147,7 +147,7 @@ class EmailBot:
                                 links.append(href)
                             links = list(set(links))
                         txt = soup.get_text()
-                        if globals.options['showText']:
+                        if my_globals.options['showText']:
                             print(txt)
                             print(soup.find_all('p'))
                         return txt, links
@@ -156,13 +156,13 @@ class EmailBot:
                         return '', []
 
                 searchUrl = queryurl + text.strip().replace(' ', '%20').replace('"', '%22')
-                if globals.options['showURL']:
+                if my_globals.options['showURL']:
                     print(f"Search: {PrintColors.blue}{searchUrl}{PrintColors.reset}")
                 txt, links = getQueryTextHelper(text, searchUrl)
-                if globals.options['searchURLs']:
+                if my_globals.options['searchURLs']:
                     print("Searching Found Links:")
                     for link in links:
-                        if globals.terminate_early:
+                        if my_globals.terminate_early:
                             return txt
                         current_time = time.strftime("%H:%M:%S", time.localtime())
                         print(f"\t{current_time}: {PrintColors.blue}{link}{PrintColors.reset}")
@@ -173,23 +173,25 @@ class EmailBot:
 
             def filterFoundTerms(foundTerms):
                 foundTermsFiltered = []
-                if globals.options['makeLowercase']:
+                if my_globals.options['makeLowercase']:
                     foundTerms = [e.lower() for e in foundTerms]  # to lowercase
                 foundTerms = list(set(foundTerms))
-                if globals.options['sortOutput']:
+                if my_globals.options['sortOutput']:
                     foundTerms.sort()
                 for mail in foundTerms:
                     checks = []
                     # PRIMARY FILTERS HERE
                     # if False:
                     #     checks.append(False)
-                    if globals.options['doPrimaryEmailCheck']:
+                    if my_globals.options['doPrimaryEmailCheck']:
                         checks.append(validate_email(email_address=mail, check_format=True, check_blacklist=False, check_dns=False, dns_timeout=10, check_smtp=False, smtp_timeout=10, smtp_helo_host=None, smtp_from_address=None, smtp_debug=False))
 
                     passAllChecks = all(checks)
                     if passAllChecks:
                         foundTermsFiltered.append(mail)
-                    print(f"{PrintColors.green}{passAllChecks}{PrintColors.reset}  : {mail}") if passAllChecks else print(f"{PrintColors.red}{passAllChecks}{PrintColors.reset} : {mail}")
+                        print(f"{PrintColors.green}{passAllChecks}{PrintColors.reset}  : {mail}")
+                    else:
+                        print(f"{PrintColors.red}{passAllChecks}{PrintColors.reset} : {mail}")
 
                 if foundTermsFiltered == []:
                     print(f"{PrintColors.red}Warning: No valid emails found.{PrintColors.reset}")
@@ -198,11 +200,11 @@ class EmailBot:
 
             txt = ''
             for term in terms:
-                if globals.terminate_early:
+                if my_globals.terminate_early:
                     return []
-                if globals.options['doBingSearch']:
+                if my_globals.options['doBingSearch']:
                     txt += getQueryText(term, BING_QUERY_URL)
-                if globals.options['doGoogleSearch']:
+                if my_globals.options['doGoogleSearch']:
                     txt += getQueryText(term, GOOGLE_QUERY_URL)
             if len(re.findall(GOOGLE_BOT_MESSAGE, txt)) > 0:
                 print(f"\n{PrintColors.red}WARNING: You may have been flagged as a bot (by Google). Uncomment `print(txt)` in the findemail() function to check.{PrintColors.reset}\n")
@@ -222,11 +224,11 @@ class EmailBot:
             queries.append(query.strip())
 
             # quotes each word
-            if globals.options['quoteEachWord']:
+            if my_globals.options['quoteEachWord']:
                 for i, foo in enumerate(row):
                     query = ''
                     for j, elem in enumerate(row):
-                        if globals.options['quoteEachWord'] and i == j:
+                        if my_globals.options['quoteEachWord'] and i == j:
                             # query += " \"" + elem + "\""
                             query += f" \"{elem}\""
                         else:
@@ -240,22 +242,22 @@ class EmailBot:
         numFoundEmails = 0
 
         # csv output: do search and write to a csv
-        with open(globals.options['inputFile'], newline='') as csvfile:
+        with open(my_globals.options['inputFile'], newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',')
             # iterate through rows of CSV
             for rowIndex, row in enumerate(spamreader):
-                if globals.terminate_early:
+                if my_globals.terminate_early:
                     csvfile.close()
                     f.close()
-                    globals.terminate_early = False
+                    my_globals.terminate_early = False
                     print(f"\n{'!'*15}\nSearch Ended. You can safely start a new one now.\n{'!'*15}\n")
                     exit()
-                if rowIndex < globals.options['startRow']:
+                if rowIndex < my_globals.options['startRow']:
                     f.write(f"\n")
                     continue
                 if ' '.join(row).replace(',', ' ').strip() == '':  # empty row check
                     continue
-                time.sleep(globals.options['delaySeconds'])
+                time.sleep(my_globals.options['delaySeconds'])
 
                 for i, elem in enumerate(row):
                     row[i] = elem.replace(',', ' ').strip()
@@ -269,7 +271,7 @@ class EmailBot:
                 numFoundEmails += len(validEmails)
                 f.write(f"{', '.join(validEmails)}\n")
                 queryNum += 1
-                if globals.options['numSearch'] != 0 and queryNum >= globals.options['numSearch']:
+                if my_globals.options['numSearch'] != 0 and queryNum >= my_globals.options['numSearch']:
                     break
 
         csvfile.close()
@@ -278,7 +280,7 @@ class EmailBot:
 
     def createCombinedCSV(prefix=''):
         # csv output: write a new combined csv
-        with open(globals.options['inputFile'], 'r') as f1, open(EmailBot.outputPath+EmailBot.queryFilename, 'r') as f2, open(EmailBot.outputPath+prefix+EmailBot.combinedFilename, 'w') as w:
+        with open(my_globals.options['inputFile'], 'r') as f1, open(EmailBot.outputPath+EmailBot.queryFilename, 'r') as f2, open(EmailBot.outputPath+prefix+EmailBot.combinedFilename, 'w') as w:
             writer = csv.writer(w)
             r1, r2 = csv.reader(f1), csv.reader(f2)
             while True:
@@ -339,11 +341,17 @@ class EmailBot:
             # Remove any elements in list with the value: None
             foundEmails = list(filter(None, foundEmails))
 
-            print(f"{PrintColors.bold}Filtered Emails: {len(foundEmails)}:{PrintColors.reset} {foundEmails}") if len(foundEmails) > 0 else print(f"{PrintColors.bold}Filtered Emails: {PrintColors.red}{len(foundEmails)}:{PrintColors.reset} {foundEmails}")
-            print(f"Found {PrintColors.red}0{PrintColors.reset} emails after filters.") if numBefore - numAfter == 0 else print(f"Found {PrintColors.bold}{numBefore - numAfter}{PrintColors.reset} emails after filters.\n")
+            if len(foundEmails) > 0:
+                print(f"{PrintColors.bold}Filtered Emails: {len(foundEmails)}:{PrintColors.reset} {foundEmails}")
+            else:
+                print(f"{PrintColors.bold}Filtered Emails: {PrintColors.red}{len(foundEmails)}:{PrintColors.reset} {foundEmails}")
+            if numBefore - numAfter == 0: 
+                print(f"Found {PrintColors.red}0{PrintColors.reset} emails after filters.")
+            else:
+                print(f"Found {PrintColors.bold}{numBefore - numAfter}{PrintColors.reset} emails after filters.\n")
             return inputRows, foundEmails
 
-        with open(globals.options['inputFile'], 'r') as f1, open(EmailBot.outputPath+EmailBot.queryFilename, 'r') as f2, open(EmailBot.outputPath+prefix+EmailBot.combinedFilename, 'w') as w:
+        with open(my_globals.options['inputFile'], 'r') as f1, open(EmailBot.outputPath+EmailBot.queryFilename, 'r') as f2, open(EmailBot.outputPath+prefix+EmailBot.combinedFilename, 'w') as w:
             writer = csv.writer(w)
             r1, r2 = csv.reader(f1), csv.reader(f2)
             while True:
@@ -360,34 +368,34 @@ class EmailBot:
 def main(argv):
     EmailBot.update()
     # Command line parsing
-    longOpts = [f'{e}=' for e in globals.optionNames].copy()
+    longOpts = [f'{e}=' for e in my_globals.optionNames].copy()
     longOpts.append('help')
     try:
         opts, args = getopt.getopt(argv, shortopts='h', longopts=longOpts)
     except getopt.GetoptError:
         print(f"{PrintColors.red}Invalid options.{PrintColors.reset} Usage:")
-        print('main.py ' + '=<value> '.join([f'--{e}' for e in globals.optionNames]))
+        print('main.py ' + '=<value> '.join([f'--{e}' for e in my_globals.optionNames]))
         sys.exit(2)
     for opt, arg in opts:
         # print(f"{opt} {arg}")
         if opt in ('-h', '--help'):
-            print('main.py ' + '=<value> '.join([f'--{e}' for e in globals.optionNames]), end='=<value>\n')
+            print('main.py ' + '=<value> '.join([f'--{e}' for e in my_globals.optionNames]), end='=<value>\n')
             sys.exit()
-        elif opt in [f'--{e}' for e in globals.optionNames]:
+        elif opt in [f'--{e}' for e in my_globals.optionNames]:
             if arg.lower() in ['t', 'true']:
-                globals.options[opt[2:]] = True
+                my_globals.options[opt[2:]] = True
             elif arg.lower() in ['f', 'false']:
-                globals.options[opt[2:]] = False
+                my_globals.options[opt[2:]] = False
             else:
                 try:
-                    globals.options[opt[2:]] = int(arg)
+                    my_globals.options[opt[2:]] = int(arg)
                 except ValueError:
-                    globals.options[opt[2:]] = arg
+                    my_globals.options[opt[2:]] = arg
 
     PrintColors.update()
     EmailBot.run()
 
 
 if __name__ == "__main__":
-    globals.initialize()
+    my_globals.initialize()
     main(sys.argv[1:])
