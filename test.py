@@ -13,4 +13,4 @@ for o in my_globals.options:
         print("STR")
 
 file_to_show = "."
-subprocess.call(["open", "-R", file_to_show])
+# subprocess.call(["open", "-R", file_to_show])

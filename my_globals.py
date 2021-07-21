@@ -1,9 +1,9 @@
-global initialized
 initialized = False
-
-global terminate_early
 terminate_early = False
 
+optionNames = None
+options = None
+output = None
 
 def initialize():
     global initialized
